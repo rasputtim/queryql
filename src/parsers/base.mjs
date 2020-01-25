@@ -1,39 +1,39 @@
-const NotImplementedError = require('../errors/not_implemented')
-const ParserValidator = require('../validators/parser')
+import NotImplementedError from '../errors/not_implemented.mjs';
+import ParserValidator from '../validators/parser.mjs';
 
-class BaseParser {
+export class BaseParser {
   constructor(queryKey, query, schema, defaults = {}) {
-    this.queryKey = queryKey
-    this.query = query
-    this.schema = schema
-    this.defaults = defaults
+    this.queryKey = queryKey;
+    this.query = query;
+    this.schema = schema;
+    this.defaults = defaults;
 
     this.validator = new ParserValidator(
       this.defineValidation.bind(this),
       queryKey,
       query
-    )
-    this._validate = null
+    );
+    this._validate = null;
   }
 
   buildKey(/* parsed */) {
-    throw new NotImplementedError()
+    throw new NotImplementedError();
   }
 
   flatten(/* map */) {
-    throw new NotImplementedError()
+    throw new NotImplementedError();
   }
 
   parse() {
-    throw new NotImplementedError()
+    throw new NotImplementedError();
   }
 
   defineValidation(/* schema */) {
-    return undefined
+    return undefined;
   }
 
   static get DEFAULTS() {
-    return {}
+    return {};
   }
 
   set defaults(defaults) {
@@ -44,7 +44,7 @@ class BaseParser {
   }
 
   get defaults() {
-    return this._defaults
+    return this._defaults;
   }
 
   validate() {
@@ -52,8 +52,7 @@ class BaseParser {
       this._validate = this.validator.validate()
     }
 
-    return this._validate
+    return this._validate;
   }
 }
 
-module.exports = BaseParser

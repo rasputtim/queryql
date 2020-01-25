@@ -1,17 +1,17 @@
-const BaseOrchestrator = require('./base')
-const FilterParser = require('../parsers/filter')
+import BaseOrchestrator from './base.mjs';
+import FilterParser from '../parsers/filter.mjs';
 
-class Filterer extends BaseOrchestrator {
+export class Filterer extends BaseOrchestrator {
   get queryKey() {
-    return 'filter'
+    return 'filter';
   }
 
   get schema() {
-    return this.querier.schema.filters
+    return this.querier.schema.filters;
   }
 
   get isEnabled() {
-    return this.schema.size >= 1
+    return this.schema.size >= 1;
   }
 
   buildParser() {
@@ -28,7 +28,7 @@ class Filterer extends BaseOrchestrator {
 
   validate() {
     if (!this.isEnabled) {
-      return true
+      return true;
     }
 
     if (!this._validate) {
@@ -38,32 +38,32 @@ class Filterer extends BaseOrchestrator {
         this.querier.validator.validate(this.parser.flatten(this.parse()))
     }
 
-    return this._validate
+    return this._validate;
   }
 
   run() {
-    this.validate()
+    this.validate();
 
-    const filters = this.parse()
+    const filters = this.parse();
 
     if (!filters) {
-      return this.querier
+      return this.querier;
     }
 
-    let key
-    let filter
+    let key;
+    let filter;
 
     for (const filterSchema of this.schema.values()) {
-      key = this.parser.buildKey(filterSchema)
-      filter = filters.get(key)
+      key = this.parser.buildKey(filterSchema);
+      filter = filters.get(key);
 
       if (filter) {
-        this.apply(filter, key)
+        this.apply(filter, key);
       }
     }
 
-    return this.querier
+    return this.querier;
   }
 }
 
-module.exports = Filterer
+

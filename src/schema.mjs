@@ -1,10 +1,10 @@
-const is = require('is')
+import is from 'is';
 
-class Schema {
+export class Schema {
   constructor() {
-    this.filters = new Map()
-    this.sorts = new Map()
-    this.page(false)
+    this.filters = new Map();
+    this.sorts = new Map();
+    this.page(false);
   }
 
   filter(field, operator, options = {}) {
@@ -12,23 +12,23 @@ class Schema {
       field,
       operator,
       options,
-    })
+    });
 
-    return this
+    return this;
   }
 
   sort(field, options = {}) {
     this.sorts.set(field, {
       field,
       options,
-    })
+    });
 
-    return this
+    return this;
   }
 
   page(isEnabledOrOptions = true) {
     if (is.bool(isEnabledOrOptions)) {
-      this.pageOptions = { isEnabled: isEnabledOrOptions }
+      this.pageOptions = { isEnabled: isEnabledOrOptions };
     } else {
       this.pageOptions = {
         ...isEnabledOrOptions,
@@ -36,25 +36,25 @@ class Schema {
           isEnabledOrOptions.isEnabled !== undefined
             ? isEnabledOrOptions.isEnabled
             : true,
-      }
+      };
     }
 
-    return this
+    return this;
   }
 
   mapFilterFieldsToOperators() {
-    const filters = Array.from(this.filters.values())
+    const filters = Array.from(this.filters.values());
 
     return filters.reduce((accumulator, filter) => {
       if (!accumulator[filter.field]) {
-        accumulator[filter.field] = []
+        accumulator[filter.field] = [];
       }
 
-      accumulator[filter.field].push(filter.operator)
+      accumulator[filter.field].push(filter.operator);
 
-      return accumulator
-    }, {})
+      return accumulator;
+    }, {});
   }
 }
 
-module.exports = Schema
+

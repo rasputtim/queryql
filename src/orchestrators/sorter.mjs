@@ -1,17 +1,17 @@
-const BaseOrchestrator = require('./base')
-const SortParser = require('../parsers/sort')
+import BaseOrchestrator from './base.mjs';
+import SortParser from '../parsers/sort.mjs';
 
-class Sorter extends BaseOrchestrator {
+export class Sorter extends BaseOrchestrator {
   get queryKey() {
-    return 'sort'
+    return 'sort';
   }
 
   get schema() {
-    return this.querier.schema.sorts
+    return this.querier.schema.sorts;
   }
 
   get isEnabled() {
-    return this.schema.size >= 1
+    return this.schema.size >= 1;
   }
 
   buildParser() {
@@ -20,12 +20,12 @@ class Sorter extends BaseOrchestrator {
       this.query || this.querier.defaultSort,
       this.querier.schema,
       this.querier.sortDefaults
-    )
+    );
   }
 
   validate() {
     if (!this.isEnabled) {
-      return true
+      return true;
     }
 
     if (!this._validate) {
@@ -35,24 +35,23 @@ class Sorter extends BaseOrchestrator {
         this.querier.validator.validate(this.parser.flatten(this.parse()))
     }
 
-    return this._validate
+    return this._validate;
   }
 
   run() {
-    this.validate()
+    this.validate();
 
-    const sorts = this.parse()
+    const sorts = this.parse();
 
     if (!sorts) {
-      return this.querier
+      return this.querier;
     }
 
     for (const [key, sort] of sorts) {
-      this.apply(sort, key)
+      this.apply(sort, key);
     }
 
-    return this.querier
+    return this.querier;
   }
 }
 
-module.exports = Sorter

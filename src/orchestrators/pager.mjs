@@ -1,17 +1,17 @@
-const BaseOrchestrator = require('./base')
-const PageParser = require('../parsers/page')
+import BaseOrchestrator from './base.mjs';
+import PageParser from '../parsers/page.mjs';
 
-class Pager extends BaseOrchestrator {
+export class Pager extends BaseOrchestrator {
   get queryKey() {
-    return 'page'
+    return 'page';
   }
 
   get schema() {
-    return this.querier.schema.pageOptions
+    return this.querier.schema.pageOptions;
   }
 
   get isEnabled() {
-    return this.schema.isEnabled
+    return this.schema.isEnabled;
   }
 
   buildParser() {
@@ -20,12 +20,12 @@ class Pager extends BaseOrchestrator {
       this.query || this.querier.defaultPage,
       this.querier.schema,
       this.querier.pageDefaults
-    )
+    );
   }
 
   validate() {
     if (!this.isEnabled) {
-      return true
+      return true;
     }
 
     if (!this._validate) {
@@ -35,20 +35,20 @@ class Pager extends BaseOrchestrator {
         this.querier.validator.validate(this.parser.flatten(this.parse()))
     }
 
-    return this._validate
+    return this._validate;
   }
 
   run() {
-    this.validate()
+    this.validate();
 
-    const page = this.parse()
+    const page = this.parse();
 
     if (page) {
-      this.apply(this.parser.flatten(this.parse(), false))
+      this.apply(this.parser.flatten(this.parse(), false));
     }
 
-    return this.querier
+    return this.querier;
   }
 }
 
-module.exports = Pager
+

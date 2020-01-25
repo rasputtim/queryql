@@ -1,6 +1,6 @@
-const BaseAdapter = require('./base')
+import BaseAdapter from './base.mjs';
 
-class KnexAdapter extends BaseAdapter {
+export class KnexAdapter extends BaseAdapter {
   static get FILTER_OPERATORS() {
     return [
       '=',
@@ -20,11 +20,11 @@ class KnexAdapter extends BaseAdapter {
       'not ilike',
       'between',
       'not between',
-    ]
+    ];
   }
 
   static get DEFAULT_FILTER_OPERATOR() {
-    return '='
+    return '=';
   }
 
   defineValidation(schema) {
@@ -62,16 +62,15 @@ class KnexAdapter extends BaseAdapter {
   }
 
   'filter:*'(builder, { field, operator, value }) {
-    return builder.where(field, operator, value)
+    return builder.where(field, operator, value);
   }
 
   sort(builder, { field, order }) {
-    return builder.orderBy(field, order)
+    return builder.orderBy(field, order);
   }
 
   page(builder, { size, offset }) {
-    return builder.limit(size).offset(offset)
+    return builder.limit(size).offset(offset);
   }
 }
 
-module.exports = KnexAdapter

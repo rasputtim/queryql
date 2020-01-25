@@ -1,7 +1,7 @@
 {
-  "name": "@truepic/queryql",
-  "version": "0.3.0",
-  "description": "Easily add filtering, sorting, and pagination to your REST API through your old friend: the query string!",
+  "name": "@rasputtim/queryql",
+  "version": "0.0.1",
+  "description": "[ES6 version of QueryQL] Easily add filtering, sorting, and pagination to your REST API through your old friend: the query string!",
   "keywords": [
     "filter",
     "filtering",
@@ -15,11 +15,11 @@
     "querystring",
     "qs"
   ],
-  "homepage": "https://github.com/TRUEPIC/queryql#readme",
-  "bugs": "https://github.com/TRUEPIC/queryql/issues",
+  "homepage": "https://github.com/rasputtim/queryql#readme",
+  "bugs": "https://github.com/rasputtim/queryql/issues",
   "license": "MIT",
-  "main": "src/index.js",
-  "repository": "TRUEPIC/queryql",
+  "main": "src/index.mjs",
+  "repository": "rasputtim/queryql",
   "scripts": {
     "lint": "run-p lint:*",
     "lint:format": "prettier --check '**'",
@@ -30,7 +30,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@hapi/joi": "^16.1.7",
+    "@hapi/joi": "^17.1.0",
     "is": "^3.3.0"
   },
   "devDependencies": {
@@ -39,7 +39,7 @@
     "eslint-plugin-jest": "^23.0.4",
     "jest": "^24.9.0",
     "jest-junit": "^9.0.0",
-    "knex": "^0.20.2",
+    "knex": "^0.20.8",
     "npm-run-all": "^4.1.5",
     "prettier": "1.19.1",
     "release-it": "^12.4.3"

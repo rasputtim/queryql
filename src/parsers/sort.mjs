@@ -1,25 +1,25 @@
-const is = require('is')
+import is from 'is';
 
-const BaseParser = require('./base')
-const flattenMap = require('../services/flatten_map')
+const BaseParser = require('./base');
+const flattenMap = require('../services/flatten_map');
 
-class SortParser extends BaseParser {
+export class SortParser extends BaseParser {
   static get DEFAULTS() {
     return {
       field: null,
       order: 'asc',
-    }
+    };
   }
 
   buildKey({ field }) {
-    return `${this.queryKey}:${field}`
+    return `${this.queryKey}:${field}`;
   }
 
   defineValidation(schema) {
-    const keys = Array.from(this.schema.sorts.keys())
+    const keys = Array.from(this.schema.sorts.keys());
 
     if (!keys.length) {
-      return schema.any().forbidden()
+      return schema.any().forbidden();
     }
 
     return schema.alternatives().try(
@@ -35,28 +35,28 @@ class SortParser extends BaseParser {
           .valid('asc', 'desc')
           .insensitive()
       )
-    )
+    );
   }
 
   flatten(map) {
     return flattenMap({
       map,
       value: value => value.order,
-    })
+    });
   }
 
   parseString(field) {
     return {
       ...this.defaults,
       field,
-    }
+    };
   }
 
   parseArray(fields) {
     return fields.map(field => ({
       ...this.defaults,
       field,
-    }))
+    }));
   }
 
   parseObject(query) {
@@ -64,28 +64,28 @@ class SortParser extends BaseParser {
       ...this.defaults,
       field,
       order,
-    }))
+    }));
   }
 
   parse() {
     if (!this.query) {
-      return new Map()
+      return new Map();
     }
 
-    this.validate()
+    this.validate();
 
-    const sorts = []
+    const sorts = [];
 
     if (is.string(this.query)) {
-      sorts.push(this.parseString(this.query))
+      sorts.push(this.parseString(this.query));
     } else if (is.array(this.query)) {
-      sorts.push(...this.parseArray(this.query))
+      sorts.push(...this.parseArray(this.query));
     } else {
-      sorts.push(...this.parseObject(this.query))
+      sorts.push(...this.parseObject(this.query));
     }
 
-    return new Map(sorts.map(sort => [this.buildKey(sort), sort]))
+    return new Map(sorts.map(sort => [this.buildKey(sort), sort]));
   }
 }
 
-module.exports = SortParser
+
