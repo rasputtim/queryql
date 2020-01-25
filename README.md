@@ -3,7 +3,7 @@
 [![npm](https://img.shields.io/npm/v/@truepic/queryql?color=0f4484)](https://www.npmjs.com/package/@truepic/queryql)
 [![CircleCI](https://img.shields.io/circleci/build/github/TRUEPIC/queryql)](https://circleci.com/gh/TRUEPIC/queryql)
 
-This is the ES6 port from QheryQl.
+This is the ES6 port from QueryQl.
 
 QueryQL makes it easy to add filtering, sorting, and pagination to your Node.js
 REST API through your old friend: the query string!
