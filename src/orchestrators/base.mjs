@@ -4,6 +4,10 @@ import { NotImplementedError } from '../errors/not_implemented.mjs';
 import { ValidationError } from '../errors/validation.mjs';
 
 export class BaseOrchestrator {
+  /**
+   * 
+   * @param querier the QueryQL object
+   */
   constructor(querier) {
     this.querier = querier;
 
@@ -57,11 +61,16 @@ export class BaseOrchestrator {
     return this._parse;
   }
 
+  /**
+   * changes the database commend to execute based on filters and queries
+   * @param values 
+   * @param querierMethod 
+   */
   apply(values, querierMethod = null) {
-    const args = [this.querier.builder, values]
+    const args = [this.querier.builder, values];
 
     this.querier.builder =
-      querierMethod && is.fn(this.querier[querierMethod])
+      (querierMethod && is.fn(this.querier[querierMethod]))
         ? this.querier[querierMethod](...args)
         : this.querier.adapter[this.queryKey](...args);
 

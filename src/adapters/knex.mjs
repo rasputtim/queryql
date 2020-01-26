@@ -58,7 +58,7 @@ export class KnexAdapter extends BaseAdapter {
         .array()
         .length(2)
         .items(schema.number()),
-    }
+    };
   }
 
   'filter:*'(builder, { field, operator, value }) {

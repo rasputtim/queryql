@@ -6,15 +6,22 @@ export class Filterer extends BaseOrchestrator {
     return 'filter';
   }
 
+  /**
+   * return the map with all configured filters required in the query string parameter
+   */
   get schema() {
     return this.querier.schema.filters;
   }
-
+  /**
+   * if there are any configuration in the map of filters return true
+   * otherwise return false
+   */
   get isEnabled() {
     return this.schema.size >= 1;
   }
-
+  
   buildParser() {
+    // params queryKey, query, schema, defaults = {}
     return new FilterParser(
       this.queryKey,
       this.query || this.querier.defaultFilter,
@@ -23,9 +30,12 @@ export class Filterer extends BaseOrchestrator {
         operator: this.querier.adapter.constructor.DEFAULT_FILTER_OPERATOR,
         ...this.querier.filterDefaults,
       }
-    )
+    );
   }
 
+  /**
+   * if it is not enabled, return true without validating the filters
+   */
   validate() {
     if (!this.isEnabled) {
       return true;
@@ -35,7 +45,7 @@ export class Filterer extends BaseOrchestrator {
       this._validate =
         this.parser.validate() &&
         this.querier.adapter.validator.validateFilters(this.parse()) &&
-        this.querier.validator.validate(this.parser.flatten(this.parse()))
+        this.querier.validator.validate(this.parser.flatten(this.parse()));
     }
 
     return this._validate;
