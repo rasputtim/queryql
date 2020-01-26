@@ -1,4 +1,4 @@
-import ValidationError from '../errors/validation.mjs';
+import { ValidationError } from '../errors/validation.mjs';
 
 export default (error, pathPrefix = null) => {
   const detail = error.details[0];

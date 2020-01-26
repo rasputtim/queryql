@@ -1,4 +1,4 @@
-import BaseAdapter from './base.mjs';
+import { BaseAdapter } from './base.mjs';
 
 export class KnexAdapter extends BaseAdapter {
   static get FILTER_OPERATORS() {

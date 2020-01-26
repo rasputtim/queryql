@@ -1,5 +1,5 @@
-import NotImplementedError from '../errors/not_implemented.mjs';
-import ParserValidator from '../validators/parser.mjs';
+import { NotImplementedError } from '../errors/not_implemented.mjs';
+import { ParserValidator } from '../validators/parser.mjs';
 
 export class BaseParser {
   constructor(queryKey, query, schema, defaults = {}) {

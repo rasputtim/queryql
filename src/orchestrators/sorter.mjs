@@ -1,5 +1,5 @@
-import BaseOrchestrator from './base.mjs';
-import SortParser from '../parsers/sort.mjs';
+import { BaseOrchestrator } from './base.mjs';
+import { SortParser } from '../parsers/sort.mjs';
 
 export class Sorter extends BaseOrchestrator {
   get queryKey() {

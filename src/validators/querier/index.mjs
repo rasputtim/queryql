@@ -1,5 +1,5 @@
-import BaseValidator from './base';
-import JoiValidator from './joi';
+import { BaseValidator } from './base.mjs';
+import { JoiValidator } from './joi.mjs';
 
 export default {
   BaseValidator,

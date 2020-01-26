@@ -1,6 +1,6 @@
 import Joi from '@hapi/joi';
 
-import joiValidationErrorConverter from '../services/joi_validation_error_converter';
+import joiValidationErrorConverter from '../services/joi_validation_error_converter.mjs';
 
 export class ParserValidator {
   constructor(defineSchema, queryKey, query) {

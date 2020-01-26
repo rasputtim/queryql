@@ -1,5 +1,5 @@
-import JoiValidator from './validators/querier/joi.mjs';
-import  KnexAdapter from './adapters/knex.mjs';
+import { JoiValidator } from './validators/querier/joi.mjs';
+import  { KnexAdapter } from './adapters/knex.mjs';
 
 export class Config {
   constructor(config) {

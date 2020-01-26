@@ -1,7 +1,7 @@
 import is from 'is';
 
-import AdapterValidator from '../validators/adapter.mjs';
-import NotImplementedError from '../errors/not_implemented.mjs';
+import { AdapterValidator } from '../validators/adapter.mjs';
+import { NotImplementedError } from '../errors/not_implemented.mjs';
 
 export class BaseAdapter {
   constructor() {

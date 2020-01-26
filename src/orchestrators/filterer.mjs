@@ -1,5 +1,5 @@
-import BaseOrchestrator from './base.mjs';
-import FilterParser from '../parsers/filter.mjs';
+import { BaseOrchestrator } from './base.mjs';
+import { FilterParser } from '../parsers/filter.mjs';
 
 export class Filterer extends BaseOrchestrator {
   get queryKey() {

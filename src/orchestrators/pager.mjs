@@ -1,5 +1,5 @@
-import BaseOrchestrator from './base.mjs';
-import PageParser from '../parsers/page.mjs';
+import { BaseOrchestrator } from './base.mjs';
+import { PageParser } from '../parsers/page.mjs';
 
 export class Pager extends BaseOrchestrator {
   get queryKey() {
@@ -24,6 +24,8 @@ export class Pager extends BaseOrchestrator {
   }
 
   validate() {
+    //this is a tempórary hack. fix it
+    return false;
     if (!this.isEnabled) {
       return true;
     }

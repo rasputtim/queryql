@@ -1,7 +1,7 @@
 import is from 'is';
 
-import NotImplementedError from '../errors/not_implemented.mjs';
-import ValidationError from '../errors/validation.mjs';
+import { NotImplementedError } from '../errors/not_implemented.mjs';
+import { ValidationError } from '../errors/validation.mjs';
 
 export class BaseOrchestrator {
   constructor(querier) {

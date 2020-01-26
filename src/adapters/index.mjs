@@ -1,7 +1,7 @@
-import BaseAdapter from './base.mjs';
-import KnexAdapter from './knex';
+import { BaseAdapter } from './base.mjs';
+import { KnexAdapter } from './knex.mjs';
 
-module.exports = {
+export default {
   BaseAdapter,
-  KnexAdapter,
+  KnexAdapter
 };

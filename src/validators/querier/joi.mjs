@@ -1,6 +1,6 @@
 import Joi from '@hapi/joi';
 
-import BaseValidator from './base;mjs';
+import { BaseValidator } from './base.mjs';
 import joiValidationErrorConverter from '../../services/joi_validation_error_converter.mjs';
 
 export class JoiValidator extends BaseValidator {

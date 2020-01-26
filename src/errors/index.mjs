@@ -1,8 +1,8 @@
-import BaseError from './base.mjs';
-import NotImplementedError from './not_implemented.mjs';
-import ValidationError from './validation.mjs';
+import { BaseError } from './base.mjs';
+import { NotImplementedError } from './not_implemented.mjs';
+import { ValidationError } from './validation.mjs';
 
-module.exports = {
+export default {
   BaseError,
   NotImplementedError,
   ValidationError,

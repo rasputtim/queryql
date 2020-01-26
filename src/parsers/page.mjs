@@ -1,7 +1,7 @@
 import is from 'is';
 
-const BaseParser = require('./base')
-const flattenMap = require('../services/flatten_map')
+import { BaseParser } from './base.mjs';
+import flattenMap from '../services/flatten_map.mjs';
 
 export class PageParser extends BaseParser {
   static get DEFAULTS() {
