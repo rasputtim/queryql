@@ -7,6 +7,7 @@ import { Sorter }  from './orchestrators/sorter.mjs';
 import { Filterer }  from './orchestrators/filterer.mjs';
 import { Pager }  from './orchestrators/pager.mjs';
 import validators  from './validators/querier/index.mjs';
+import qs from 'qs';
 
 /**
  * 
@@ -15,21 +16,36 @@ import validators  from './validators/querier/index.mjs';
  * @param config the config options
  */
 export class QueryQL {
-  constructor(query, builder, config = {}) {
-    this.query = query;
-    this.builder = builder;
+  constructor(query, builder, config = {},url = {}) {
     
+    this.builder = builder;
+    this.url = url;
     this.config = new Config(config);
+    
+    let myQuery;
+    const queryType = this.config.get('queryType');
+    if ( queryType === 'hapi'){
+      myQuery= this.parseExtendedQueryString(this.url.search.replace('?',''));
+
+    }
+    if (queryType === 'express'){
+      myQuery = query;
+    }
+    
+    
+    
+    
+    this.query = myQuery;
     //the database adapter
     //defaults to knex adapter
     this.adapter = new (this.config.get('adapter'))();
     /**
-     * holder of configuration for the query strings for filtering and sorting.
+     * holder of configuration for the query strings for filtering and sorting passed in the schema constructor.
      * there is no map for cofiguring page query string parameters by default
-     * * the configuratios are <key,value> pairs in the format <'field[operator]', options >
+     * * the configuratios are <key,value> pairs in the format <'field[operator]', {field,operator,options}} >
      */
     this.schema = new Schema();
-    this.defineSchema(this.schema);
+    this.defineSchema(this.schema); //cria os mapascom as configurações dos esquemas
 
     this.filterer = new Filterer(this);
     this.sorter = new Sorter(this);
@@ -89,21 +105,34 @@ export class QueryQL {
     //this.validate();
 
     if ( this.filterer.isEnabled) {
-      if ( this.filterer.validate()){
+      
         this.filterer.run();
-      }
+     
     }
     if(this.sorter.isEnabled) {
-      if ( this.sorter.validate()) this.sorter.run();
+       this.sorter.run();
     }
     if (this.pager.isEnabled) {
       const willPage = this.pager.validate();
-      if (willPage) this.pager.run();
+      this.pager.run();
     }
     //run the knex command in the builder
     
     return this.builder;
   }
+
+  /**
+   * Parse an extended query string with qs.
+   *
+   * @return {Object}
+   * @private
+   */
+  parseExtendedQueryString(str) {
+    return qs.parse(str, {
+      allowPrototypes: true
+    });
+  }
+
 }
 
 export default {

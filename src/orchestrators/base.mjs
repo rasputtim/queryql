@@ -3,6 +3,7 @@ import is from 'is';
 import { NotImplementedError } from '../errors/not_implemented.mjs';
 import { ValidationError } from '../errors/validation.mjs';
 
+
 export class BaseOrchestrator {
   /**
    * 
@@ -11,8 +12,13 @@ export class BaseOrchestrator {
   constructor(querier) {
     this.querier = querier;
 
-    this.parser = this.buildParser();
     this._parse = null;
+
+    /** buildParser create a FilterParser/PageParser/SortParser 
+     * object depending on who has called the constructor 
+     * */
+    this.parser = this.buildParser();
+
 
     this._validate = null;
   }
@@ -41,10 +47,17 @@ export class BaseOrchestrator {
     throw new NotImplementedError();
   }
 
-  get query() {
-    return this.querier.query[this.queryKey];
-  }
 
+/**
+ * verify if the query string of the request have the param needed 'filter' or 'page' or 'sort'
+ */
+  get query() {
+
+    let querystring = this.querier.query[this.queryKey];
+    return querystring;
+  }
+  
+  // unico lugar onde _parse eh setado 
   parse() {
     if (!this.isEnabled) {
       if (this.query) {
@@ -55,6 +68,7 @@ export class BaseOrchestrator {
     }
 
     if (!this._parse) {
+      //this.parser is created in the constructor with the function build parser of the caller object
       this._parse = this.parser.parse();
     }
 
@@ -68,9 +82,9 @@ export class BaseOrchestrator {
    */
   apply(values, querierMethod = null) {
     const args = [this.querier.builder, values];
-
+    let is_function =  is.fn(this.querier[querierMethod]);
     this.querier.builder =
-      (querierMethod && is.fn(this.querier[querierMethod]))
+      (querierMethod && is_function)
         ? this.querier[querierMethod](...args)
         : this.querier.adapter[this.queryKey](...args);
 

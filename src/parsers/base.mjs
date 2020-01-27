@@ -40,7 +40,7 @@ export class BaseParser {
     this._defaults = {
       ...this.constructor.DEFAULTS,
       ...defaults,
-    }
+    };
   }
 
   get defaults() {
@@ -49,7 +49,7 @@ export class BaseParser {
 
   validate() {
     if (!this._validate) {
-      this._validate = this.validator.validate()
+      this._validate = this.validator.validate();
     }
 
     return this._validate;

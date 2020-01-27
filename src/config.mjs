@@ -10,10 +10,16 @@ export class Config {
     return {
       adapter: KnexAdapter,
       validator: JoiValidator,
+      /**
+       * hapi process query string not the same as express
+       * to use hapi request.query we need to parse the query-string using the module 'qs'
+       * because queryQl was designed to use express the query string parsed by express
+       */
+      queryType: 'hapi'
     };
   }
 
-  static set defaults(defaults) {
+    static set defaults(defaults) {
     this._defaults = {
       ...this._defaults,
       ...defaults,

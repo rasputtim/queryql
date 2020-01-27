@@ -69,6 +69,15 @@ class ImageQuerier extends QueryQL {
     schema.sort('name')
     schema.page()
   }
+  
+//this is needed for the validation of the querie parameters passed in the query string
+defineValidation(schema) {
+    return {
+      'filter:status[=]': schema.string().valid('open', 'closed'),
+      'page:size': schema.number().max(100),
+    }
+  }
+
 }
 ```
 

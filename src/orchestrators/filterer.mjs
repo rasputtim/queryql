@@ -20,15 +20,31 @@ export class Filterer extends BaseOrchestrator {
     return this.schema.size >= 1;
   }
   
+  /**
+   * this method is called when the object is created, by the constructor of the 
+   * BaseOrchestrator class
+   */
   buildParser() {
-    // params queryKey, query, schema, defaults = {}
+    // params: 
+    //queryKey= 'filter' , 
+    //query = will get query query from the base class and return if there are a query param caled 'filter'
+    //        otherwise return the default filter defind in the user created schema, 
+    //schema
+    //defaults = {}
+    let myQueryKey = this.queryKey;
+    //para tipo [in] formato: {'created_by': {} }
+    //para operador '=' : formato {'is_public': 'true' }
+    let myQueryString = this.query || this.querier.defaultFilter;//{'created_by': {} };//
+    let mySchema = this.querier.schema;
+    let myOperator = this.querier.adapter.constructor.DEFAULT_FILTER_OPERATOR;
+    let myFilterDefaults = this.querier.filterDefaults;
     return new FilterParser(
-      this.queryKey,
-      this.query || this.querier.defaultFilter,
-      this.querier.schema,
+      myQueryKey,
+      myQueryString,
+      mySchema,
       {
-        operator: this.querier.adapter.constructor.DEFAULT_FILTER_OPERATOR,
-        ...this.querier.filterDefaults,
+        operator: myOperator,
+        ...myFilterDefaults,
       }
     );
   }
@@ -41,12 +57,7 @@ export class Filterer extends BaseOrchestrator {
       return true;
     }
 
-    if (!this._validate) {
-      this._validate =
-        this.parser.validate() &&
-        this.querier.adapter.validator.validateFilters(this.parse()) &&
-        this.querier.validator.validate(this.parser.flatten(this.parse()));
-    }
+    
 
     return this._validate;
   }
