@@ -15,7 +15,7 @@ export class Config {
        * to use hapi request.query we need to parse the query-string using the module 'qs'
        * because queryQl was designed to use express the query string parsed by express
        */
-      queryType: 'hapi'
+      queryType: 'express'
     };
   }
 
