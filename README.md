@@ -3,10 +3,16 @@
 [![npm](https://img.shields.io/npm/v/@truepic/queryql?color=0f4484)](https://www.npmjs.com/package/@truepic/queryql)
 [![CircleCI](https://img.shields.io/circleci/build/github/TRUEPIC/queryql)](https://circleci.com/gh/TRUEPIC/queryql)
 
-This is the ES6 port from QueryQl.
+This is the ES6 port of QueryQl with hapi support.
 
 QueryQL makes it easy to add filtering, sorting, and pagination to your Node.js
 REST API through your old friend: the query string!
+
+The Original QueryQl does not added support for the hapi (version 19.0.0) query string format.
+This port adds this suport making QueryQl usable with happy and port all requires to imports making use of the mjs file type instead of the .js one.
+
+Maybe it will be usefull
+
 [Read our introductory article](https://medium.com/truepicinc/queryql-easily-add-filtering-sorting-and-pagination-to-your-node-js-rest-api-9222135c93ae)
 to learn more about why we wrote it and the problems it solves at
 [Truepic](https://truepic.com).
@@ -22,17 +28,24 @@ Out-of-the-box, QueryQL supports the following:
   Knex)
 - Validator: [Joi](https://github.com/hapijs/joi)
 
+- queryType: express, hapi
+
 ## Installation
 
-```bash
-$ npm install @truepic/queryql
-```
+it is not npm published. maybe I will publish some day.
+For now it is for my personal use. but maybe iti is useful for you as well.
+
+To install you have to clone it or download and manualy install in your project.
+
 
 ## Getting Started
 
 QueryQL takes a parsed query string (like Express' `req.query`) and translates
 it into the appropriate function calls that your query builder / ORM understands
 to filter, sort, and paginate the records.
+
+In case of using hapi instead of Express the query string format is different. be careful.
+This package adds support for both.
 
 Let's consider an example to illustrate:
 
@@ -60,7 +73,7 @@ allowed through what we call a _querier_. Here's how one might look for the
 `/images` endpoint:
 
 ```js
-const QueryQL = require('@truepic/queryql')
+const QueryQL = require('../lib/queryql') //the place you cloned this package
 
 class ImageQuerier extends QueryQL {
   defineSchema(schema) {
@@ -84,8 +97,9 @@ defineValidation(schema) {
 With your querier defined, you can now call it in your router / controller.
 Here's how it might look in an Express route:
 
-```js
+```use with Express. js
 app.get('/images', async (req, res, next) => {
+
   const querier = new ImageQuerier(req.query, knex('images'))
   let images
 
@@ -99,6 +113,25 @@ app.get('/images', async (req, res, next) => {
   res.send({ images })
 })
 ```
+
+```use with @hapi/hapi
+handler: async (req, h) => {
+
+  const querier = new ImageQuerier(req.query, knex('images'),{ queryType: 'hapi'},req.url)
+  let images
+
+  try {
+    images = await querier.run()
+  } catch (error) {
+    // Handle validation error, such as by passing to an Express error handler:
+    console.log(error)
+  }
+
+  return reply.response(result);
+})
+```
+
+
 
 Behind-the-scenes, QueryQL takes your initial query builder (`knex('images')`),
 and applies the following Knex chain when `querier.run()` is called:

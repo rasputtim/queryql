@@ -1,3 +1,5 @@
+const {defaults} = require('jest-config');
+
 module.exports = {
   coverageDirectory: 'test/coverage',
   reporters: [
@@ -10,4 +12,5 @@ module.exports = {
     ],
   ],
   testMatch: ['**/test/src/**/*.js'],
+  moduleFileExtensions: [...defaults.moduleFileExtensions, 'mjs', 'ts', 'tsx'],
 }
