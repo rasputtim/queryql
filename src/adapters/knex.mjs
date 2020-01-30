@@ -61,7 +61,25 @@ export class KnexAdapter extends BaseAdapter {
     };
   }
 
-  'filter:*'(builder, { field, operator, value }) {
+
+
+
+  /**
+   * 
+   * @param builder the database builder
+   * @param param1  {field , operator, value } for the query
+   * @param myFunction a custom function created in the querier class to override the where clause
+   */
+  'filter:*'(builder, { field, operator, value }, myFunction = null){
+    /**
+     * this allows use custom queries functions to hande filters.
+     * only create a method in the querier class to handle the filter
+     * this will override { operator }  as a function for instance operator 'filter:='
+     */
+    if (myFunction){
+      return this.querier[myFunction.name](builder, { field, operator, value });
+      //return builder.where(this.querier[myFunction.name](builder/*, { field, operator, value }*/));
+    }else
     return builder.where(field, operator, value);
   }
 

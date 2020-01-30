@@ -77,16 +77,21 @@ export class BaseOrchestrator {
 
   /**
    * changes the database commend to execute based on filters and queries
-   * @param values 
-   * @param querierMethod 
+   * @param values the query parameters
+   * @param querierMethod a method that will override the where clause of the Query
+   *                      this method shall be created in the querier class with the name of the field
+   * todo: I changed a lot this method without knowing the consequences. 
+   *       must make the tests to see what happens
    */
   apply(values, querierMethod = null) {
-    const args = [this.querier.builder, values];
-    let is_function =  is.fn(this.querier[querierMethod]);
-    this.querier.builder =
-      (querierMethod && is_function)
-        ? this.querier[querierMethod](...args)
-        : this.querier.adapter[this.queryKey](...args);
+    let args= [];
+    let is_function =  is.fn(this.querier[querierMethod.name]);
+    if (is_function){
+      args = [this.querier.builder, values, querierMethod];
+    }else{
+      args = [this.querier.builder, values];
+    }
+    this.querier.builder = this.querier.adapter[this.queryKey](...args);
 
     return this.querier.builder;
   }

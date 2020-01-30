@@ -218,3 +218,36 @@ interactively orchestrate the release process:
 ```bash
 $ npm run release
 ```
+## Overriding the where clause
+
+It is possible to override the where clause of the query by creating a method in the querier class with the name of the filter
+
+example:
+
+export class MusclesQuerier extends QueryQL {
+  defineSchema(schema) {
+...
+ schema.filter('is_public', '='); 
+  }
+
+/**
+   * function to handle the filter is_public. 
+   * @param args 
+   * args[0] = builder
+   * args[1] = {field, operator , value }
+   */
+
+  is_public(...args){
+    let field = args[1].field;
+    let operator = args[1].operator;
+    let value = args[1].value;
+    let UserId = this.config.get('userID');  //userID comes from the configuration passed when the object is created
+    let builder = args[0] || this.builder;
+    builder.where((builder) =>
+    builder.where('created_by', UserId).orWhere(field, operator,value)
+  );
+  return builder;
+  }
+
+  ....
+}

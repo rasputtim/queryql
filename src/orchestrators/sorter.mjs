@@ -16,6 +16,7 @@ export class Sorter extends BaseOrchestrator {
 
   buildParser() {
     return new SortParser(
+      this.querier,
       this.queryKey,
       this.query || this.querier.defaultSort,
       this.querier.schema,

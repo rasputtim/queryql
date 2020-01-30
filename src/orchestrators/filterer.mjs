@@ -39,6 +39,7 @@ export class Filterer extends BaseOrchestrator {
     let myOperator = this.querier.adapter.constructor.DEFAULT_FILTER_OPERATOR;
     let myFilterDefaults = this.querier.filterDefaults;
     return new FilterParser(
+      this.querier,
       myQueryKey,
       myQueryString,
       mySchema,
@@ -46,6 +47,7 @@ export class Filterer extends BaseOrchestrator {
         operator: myOperator,
         ...myFilterDefaults,
       }
+
     );
   }
 
@@ -76,10 +78,16 @@ export class Filterer extends BaseOrchestrator {
 
     for (const filterSchema of this.schema.values()) {
       key = this.parser.buildKey(filterSchema);
+      let is_function = this.parser.haveFunction(filterSchema);
+
       filter = filters.get(key);
 
       if (filter) {
-        this.apply(filter, key);
+        if(is_function != null) {
+          this.apply(filter, is_function);
+        }else {
+          this.apply(filter, key);
+        }
       }
     }
 

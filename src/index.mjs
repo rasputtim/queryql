@@ -38,7 +38,7 @@ export class QueryQL {
     this.query = myQuery;
     //the database adapter
     //defaults to knex adapter
-    this.adapter = new (this.config.get('adapter'))();
+    this.adapter = new (this.config.get('adapter'))(this);
     /**
      * holder of configuration for the query strings for filtering and sorting passed in the schema constructor.
      * there is no map for cofiguring page query string parameters by default
@@ -103,13 +103,15 @@ export class QueryQL {
    */
   run() {
     //this.validate();
-
+    
     if ( this.filterer.isEnabled) {
-      
+        this.filterer.validate() ;
         this.filterer.run();
      
     }
+    
     if(this.sorter.isEnabled) {
+      this.sorter.validate();
        this.sorter.run();
     }
     if (this.pager.isEnabled) {

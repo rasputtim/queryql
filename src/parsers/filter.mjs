@@ -13,7 +13,26 @@ export class FilterParser extends BaseParser {
   }
 
   buildKey({ field, operator }) {
-    return `${this.queryKey}:${field}[${operator}]`;
+    let myKey = `${this.queryKey}:${field}[${operator}]`;
+    return myKey;
+  }
+
+  /**
+   * this method indicates that the querier class have a method to handle this query and will override the where clause
+   * @param param0 { fileld , operator }
+   * will return the methos it it exists
+   * otherwise will return null
+   */
+  haveFunction({ field, operator }) {
+    let myKey = `${this.queryKey}:${field}[${operator}]`;
+    let is_function =  is.fn(this.querier[field]);
+   
+    if(is_function) {
+      return  this.querier[field];
+                            
+    }else {
+      return null;
+    }
   }
 
   defineValidation(schema) {

@@ -2,12 +2,12 @@ import { NotImplementedError } from '../errors/not_implemented.mjs';
 import { ParserValidator } from '../validators/parser.mjs';
 
 export class BaseParser {
-  constructor(queryKey, query, schema, defaults = {}) {
+  constructor(querier,queryKey, query, schema, defaults = {}) {
     this.queryKey = queryKey;
     this.query = query;
     this.schema = schema;
     this.defaults = defaults;
-
+    this.querier = querier;
     this.validator = new ParserValidator(
       this.defineValidation.bind(this),
       queryKey,
@@ -19,7 +19,10 @@ export class BaseParser {
   buildKey(/* parsed */) {
     throw new NotImplementedError();
   }
-
+  haveFunction(/* parsed */) {
+    throw new NotImplementedError();
+  }
+  
   flatten(/* map */) {
     throw new NotImplementedError();
   }

@@ -4,8 +4,9 @@ import { AdapterValidator } from '../validators/adapter.mjs';
 import { NotImplementedError } from '../errors/not_implemented.mjs';
 
 export class BaseAdapter {
-  constructor() {
+  constructor(querier) {
     this.validator = new AdapterValidator(this.defineValidation.bind(this));
+    this.querier = querier;
   }
 
   static get FILTER_OPERATORS() {
@@ -32,7 +33,7 @@ export class BaseAdapter {
     return undefined;
   }
 
-  filter(builder, filter) {
+  filter(builder, filter,myFunction = null) {
     const { operator } = filter;
 
     if (!this.constructor.FILTER_OPERATORS.includes(operator)) {
@@ -45,8 +46,9 @@ export class BaseAdapter {
       return this[operatorMethod](builder, filter);
     }
 
-    return this['filter:*'](builder, filter);
+    return this['filter:*'](builder, filter, myFunction);
   }
+  
 }
 
 

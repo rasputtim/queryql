@@ -16,6 +16,7 @@ export class Pager extends BaseOrchestrator {
 
   buildParser() {
     return new PageParser(
+      this.querier,
       this.queryKey,
       this.query || this.querier.defaultPage,
       this.querier.schema,
