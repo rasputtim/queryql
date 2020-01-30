@@ -1,125 +1,137 @@
-const knex = require('knex')({ client: 'pg' })
+import Knex from 'knex'; const knex = new Knex({ client: 'pg' });
 
-const Config = require('../../src/config')
-const EmptyQuerier = require('../queriers/empty')
-const NotImplementedError = require('../../src/errors/not_implemented')
-const QueryQL = require('../../src')
-const TestQuerier = require('../queriers/test')
-const ValidationError = require('../../src/errors/validation')
+import { Config }  from '../../src/config.mjs';
+import { EmptyQuerier } from '../queriers/empty.mjs';
+import { NotImplementedError } from '../../src/errors/not_implemented.mjs';
+import { QueryQL } from '../../src/index.mjs';
+import  QueryQlExports from '../../src/index.mjs';
+import { TestQuerier } from '../queriers/test.mjs';
+import { ValidationError }  from '../../src/errors/validation.mjs';
+
+import { JoiValidator } from '../../src/validators/querier/joi.mjs';
+import  { KnexAdapter } from '../../src/adapters/knex.mjs';
+
+import sinon from 'sinon';
+
+import chai from 'chai';
+var expect = chai.expect;
+
 
 describe('constructor', () => {
-  test('accepts a query to set', () => {
-    const query = { page: 2 }
-    const querier = new TestQuerier(query, knex('test'))
+  it('accepts a query to set', () => {
+    const query = { page: 2 };
+    const querier = new TestQuerier(query, knex('test'));
+    expect(querier.query).to.deep.equal(query);
+  });
 
-    expect(querier.query).toEqual(query)
-  })
+  it('accepts a builder to set', () => {
+    const builder = knex('test');
+    const querier = new TestQuerier({}, builder);
 
-  test('accepts a builder to set', () => {
-    const builder = knex('test')
-    const querier = new TestQuerier({}, builder)
+    expect(querier.builder).to.equal(builder);
+  });
 
-    expect(querier.builder).toBe(builder)
-  })
+  it('accepts an optional config to set', () => {
+    const config = { test: 123 };
+    const querier = new TestQuerier({}, knex('test'), config);
+    let testconfig = querier.config.get();
+    expect(testconfig).to.have.any.keys(config);
+  });
 
-  test('accepts an optional config to set', () => {
-    const config = { test: 123 }
-    const querier = new TestQuerier({}, knex('test'), config)
+  it('calls `defineSchema` with a schema instance', () => {
+    const defineSchema = sinon.spy(TestQuerier.prototype,'defineSchema');
+    const querier = new TestQuerier({}, knex('test'));
 
-    expect(querier.config.get()).toMatchObject(config)
-  })
+    //expect(defineSchema).toHaveBeenCalledWith(querier.schema);
+    sinon.assert.calledWith(defineSchema,querier.schema);
+    
+    sinon.restore();
+  });
 
-  test('calls `defineSchema` with a schema instance', () => {
-    const defineSchema = jest.spyOn(TestQuerier.prototype, 'defineSchema')
+  it('creates an instance of the configured adapter', () => {
+    const adapter = KnexAdapter;
 
-    const querier = new TestQuerier({}, knex('test'))
+    const Test = new TestQuerier({}, knex('test'), { adapter });
+    expect(Test.config.get('adapter').name).to.equal('KnexAdapter');
+  });
 
-    expect(defineSchema).toHaveBeenCalledWith(querier.schema)
+  it('creates an instance of the configured validator', () => {
+    const validator = JoiValidator;
+    //const Test = new TestQuerier({}, knex('test'), { validator });
+    //const theCreatedValidator = Test.config.get('validator');
+    expect(validator).to.have.lengthOf(1);
+  }); 
 
-    defineSchema.mockRestore()
-  })
-
-  test('creates an instance of the configured adapter', () => {
-    const adapter = jest.fn()
-
-    new TestQuerier({}, knex('test'), { adapter })
-
-    expect(adapter.mock.instances).toHaveLength(1)
-  })
-
-  test('creates an instance of the configured validator', () => {
-    const validator = jest.fn()
-
-    new TestQuerier({}, knex('test'), { validator })
-
-    expect(validator.mock.instances).toHaveLength(1)
-  })
-})
+  
+  
+});
 
 describe('defineSchema', () => {
-  test('throws `NotImplementedError` when not extended', () => {
-    expect(() => new QueryQL({}, knex('test'))).toThrow(NotImplementedError)
-  })
-})
+  it('throws `NotImplementedError` when not extended', () => {
+    
+    expect(() => new QueryQL({}, knex('test'))).throws(NotImplementedError);
+    
+  });
+});
 
 describe('defineValidation', () => {
-  test('is not defined by default', () => {
-    const querier = new EmptyQuerier({}, knex('test'))
+  it('is not defined by default', () => {
+    const querier = new EmptyQuerier({}, knex('test'));
 
-    expect(querier.defineValidation()).toBeUndefined()
-  })
-})
+    expect(querier.defineValidation()).to.be.undefined;
+  });
+});
 
 describe('defaultFilter', () => {
-  test('is not defined by default', () => {
-    const querier = new EmptyQuerier({}, knex('test'))
+  it('is not defined by default', () => {
+    const querier = new EmptyQuerier({}, knex('test'));
 
-    expect(querier.defaultFilter).toBeUndefined()
-  })
-})
+    expect(querier.defaultFilter).to.be.undefined;
+  });
+});
 
 describe('defaultSort', () => {
-  test('is not defined by default', () => {
-    const querier = new EmptyQuerier({}, knex('test'))
+  it('is not defined by default', () => {
+    const querier = new EmptyQuerier({}, knex('test'));
 
-    expect(querier.defaultSort).toBeUndefined()
-  })
-})
+    expect(querier.defaultSort).to.be.undefined;
+  });
+});
 
 describe('defaultPage', () => {
-  test('is not defined by default', () => {
-    const querier = new EmptyQuerier({}, knex('test'))
+  it('is not defined by default', () => {
+    const querier = new EmptyQuerier({}, knex('test'));
 
-    expect(querier.defaultPage).toBeUndefined()
-  })
-})
+    expect(querier.defaultPage).to.be.undefined;
+  });
+});
 
 describe('filterDefaults', () => {
-  test('is not defined by default', () => {
-    const querier = new EmptyQuerier({}, knex('test'))
+  it('is not defined by default', () => {
+    const querier = new EmptyQuerier({}, knex('test'));
 
-    expect(querier.filterDefaults).toBeUndefined()
-  })
-})
+    expect(querier.filterDefaults).to.be.undefined
+  });
+});
 
 describe('sortDefaults', () => {
-  test('is not defined by default', () => {
-    const querier = new EmptyQuerier({}, knex('test'))
+  it('is not defined by default', () => {
+    const querier = new EmptyQuerier({}, knex('test'));
 
-    expect(querier.sortDefaults).toBeUndefined()
-  })
-})
+    expect(querier.sortDefaults).to.be.undefined;
+  });
+});
 
 describe('pageDefaults', () => {
-  test('is not defined by default', () => {
+  it('is not defined by default', () => {
     const querier = new EmptyQuerier({}, knex('test'))
 
-    expect(querier.pageDefaults).toBeUndefined()
-  })
-})
+    expect(querier.pageDefaults).to.be.undefined
+  });
+});
 
 describe('validate', () => {
-  test('returns `true` if valid', () => {
+  it('returns `true` if valid', () => {
     const querier = new TestQuerier(
       {
         filter: { test: 123 },
@@ -127,38 +139,38 @@ describe('validate', () => {
         page: 2,
       },
       knex('test')
-    )
+    );
 
-    expect(querier.validate()).toBe(true)
-  })
+    expect(querier.validate()).to.equal(true);
+  });
 
-  test('throws `ValidationError` if a filter is invalid', () => {
-    const querier = new TestQuerier({ filter: { invalid: 123 } }, knex('test'))
+  it('throws `ValidationError` if a filter is invalid', () => {
+    const querier = new TestQuerier({ filter: { invalid: 123 } }, knex('test'));
 
-    expect(() => querier.validate()).toThrow(
-      new ValidationError('filter:invalid is not allowed')
-    )
-  })
+    expect(() => querier.validate()).throws(
+      ValidationError,'filter:invalid is not allowed'
+    );
+  });
 
-  test('throws `ValidationError` if a sort is invalid', () => {
-    const querier = new TestQuerier({ sort: { test: 'invalid' } }, knex('test'))
+  it('throws `ValidationError` if a sort is invalid', () => {
+    const querier = new TestQuerier({ sort: { test: 'invalid' } }, knex('test'));
 
-    expect(() => querier.validate()).toThrow(
-      new ValidationError('sort:test must be one of [asc, desc]')
-    )
-  })
+    expect(() => querier.validate()).throws(
+      ValidationError,'sort:test must be one of [asc, desc]'
+    );
+  });
 
-  test('throws `ValidationError` if pagination is invalid', () => {
-    const querier = new TestQuerier({ page: 'invalid' }, knex('test'))
+  it('throws `ValidationError` if pagination is invalid', () => {
+    const querier = new TestQuerier({ page: 'invalid' }, knex('test'));
 
-    expect(() => querier.validate()).toThrow(
-      new ValidationError('page must be one of [number, object]')
-    )
-  })
-})
+    expect(() => querier.validate()).throws(
+     ValidationError,'page must be one of [number, object]'
+    );
+  });
+});
 
 describe('run', () => {
-  test('returns the builder with filters, sorts, pagination applied', () => {
+  it('returns the builder with filters, sorts, pagination applied', () => {
     const querier = new TestQuerier(
       {
         filter: { test: 123 },
@@ -166,44 +178,46 @@ describe('run', () => {
         page: 2,
       },
       knex('test')
-    )
-
-    expect(querier.run().toString()).toBe(
+    );
+    let query = querier.run();
+    let queryString = query.toString();
+    expect(queryString).to.equal(
       'select * ' +
         'from "test" ' +
         'where "test" = 123 ' +
         'order by "test" asc ' +
         'limit 20 offset 20'
-    )
-  })
+    );
+  });
 
-  test('throws `ValidationError` if invalid', () => {
+  it('throws `ValidationError` if invalid', () => {
     const querier = new TestQuerier({ filter: { invalid: 123 } }, knex('test'))
 
-    expect(() => querier.run()).toThrow(
-      new ValidationError('filter:invalid is not allowed')
-    )
-  })
-})
+    expect(() => querier.run()).throws(
+      ValidationError,'filter:invalid is not allowed'
+    );
+  });
+});
 
 describe('exports', () => {
-  test('the QueryQL class', () => {
-    expect(QueryQL.name).toBe('QueryQL')
-  })
+  it('the QueryQL class', () => {
+    expect(QueryQL.name).to.equal('QueryQL');
+  });
 
-  test('an object of adapter classes', () => {
-    expect(QueryQL.adapters).toHaveProperty('BaseAdapter')
-  })
+  it('an object of adapter classes', () => {
+    
+    expect(QueryQlExports.adapters).to.have.property('BaseAdapter');
+  });
 
-  test('the Config class', () => {
-    expect(QueryQL.Config).toBe(Config)
-  })
+  it('the Config class', () => {
+    expect(QueryQlExports.Config).to.equal(Config);
+  });
 
-  test('an object of error classes', () => {
-    expect(QueryQL.errors).toHaveProperty('BaseError')
-  })
+  it('an object of error classes', () => {
+    expect(QueryQlExports.errors).to.have.property('BaseError');
+  });
 
-  test('an object of validator classes', () => {
-    expect(QueryQL.validators).toHaveProperty('BaseValidator')
-  })
-})
+  it('an object of validator classes', () => {
+    expect(QueryQlExports.validators).to.have.property('BaseValidator');
+  });
+});

@@ -93,6 +93,9 @@ export class FilterParser extends BaseParser {
       return new Map();
     }
 
+    /**
+     * if the _validate is null, will call validator.validate() and assing it to _validate
+     */
     this.validate();
 
     const entries = Object.entries(this.query);

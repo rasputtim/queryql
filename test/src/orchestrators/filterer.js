@@ -1,42 +1,47 @@
-const knex = require('knex')({ client: 'pg' })
+import Knex from 'knex'; const knex = new Knex({ client: 'pg' });
 
-const EmptyQuerier = require('../../queriers/empty')
-const Filterer = require('../../../src/orchestrators/filterer')
-const TestQuerier = require('../../queriers/test')
-const ValidationError = require('../../../src/errors/validation')
+import { EmptyQuerier } from  '../../queriers/empty.mjs';
+import { Filterer } from '../../../src/orchestrators/filterer.mjs';
+import {  TestQuerier } from '../../queriers/test.mjs';
+import { ValidationError } from '../../../src/errors/validation.mjs';
+
+
+import chai from 'chai';
+var expect = chai.expect;
+
 
 describe('queryKey', () => {
-  test('returns the key for filters in the query', () => {
-    const filterer = new Filterer(new TestQuerier({}, knex('test')))
+  it('returns the key for filters in the query', () => {
+    const filterer = new Filterer(new TestQuerier({}, knex('test')));
 
-    expect(filterer.queryKey).toBe('filter')
-  })
-})
+    expect(filterer.queryKey).to.equal('filter');
+  });
+});
 
 describe('schema', () => {
-  test('returns the schema for filters', () => {
-    const filterer = new Filterer(new TestQuerier({}, knex('test')))
+  it('returns the schema for filters', () => {
+    const filterer = new Filterer(new TestQuerier({}, knex('test')));
 
-    expect(filterer.schema.has('test[=]')).toBe(true)
-  })
-})
+    expect(filterer.schema.has('test[=]')).to.equal(true);
+  });
+});
 
 describe('isEnabled', () => {
-  test('returns `true` if >= 1 filter is whitelisted in the schema', () => {
-    const filterer = new Filterer(new TestQuerier({}, knex('test')))
+  it('returns `true` if >= 1 filter is whitelisted in the schema', () => {
+    const filterer = new Filterer(new TestQuerier({}, knex('test')));
 
-    expect(filterer.isEnabled).toBe(true)
-  })
+    expect(filterer.isEnabled).to.equal(true);
+  });
 
-  test('returns `false` if no filter is whitelisted in the schema', () => {
-    const filterer = new Filterer(new EmptyQuerier({}, knex('test')))
+  it('returns `false` if no filter is whitelisted in the schema', () => {
+    const filterer = new Filterer(new EmptyQuerier({}, knex('test')));
 
-    expect(filterer.isEnabled).toBe(false)
-  })
-})
+    expect(filterer.isEnabled).to.equal(false);
+  });
+});
 
 describe('parse', () => {
-  test('parses/returns the filters from the query', () => {
+  it('parses/returns the filters from the query', () => {
     const filterer = new Filterer(
       new TestQuerier(
         {
@@ -44,69 +49,69 @@ describe('parse', () => {
         },
         knex('test')
       )
-    )
+    );
 
-    expect(filterer.parse().has('filter:test[=]')).toBe(true)
-  })
+    expect(filterer.parse().has('filter:test[=]')).to.equal(true)
+  });
 
-  test('calls/uses `querier.defaultFilter` if no query', () => {
-    const querier = new TestQuerier({}, knex('test'))
+  it('calls/uses `querier.defaultFilter` if no query', () => {
+    const querier = new TestQuerier({}, knex('test'));
 
     const defaultFilter = jest
       .spyOn(querier, 'defaultFilter', 'get')
-      .mockReturnValue({ test: 123 })
+      .mockReturnValue({ test: 123 });
 
-    const filterer = new Filterer(querier)
-    const parsed = filterer.parse()
+    const filterer = new Filterer(querier);
+    const parsed = filterer.parse();
 
-    expect(filterer.query).toBeFalsy()
-    expect(defaultFilter).toHaveBeenCalled()
-    expect(parsed.has('filter:test[=]')).toBe(true)
+    expect(filterer.query).toBeFalsy();
+    expect(defaultFilter).toHaveBeenCalled();
+    expect(parsed.has('filter:test[=]')).to.equal(true);
 
-    defaultFilter.mockRestore()
-  })
-})
+    defaultFilter.mockRestore();
+  });
+});
 
 describe('validate', () => {
-  test('returns `true` if valid', () => {
+  it('returns `true` if valid', () => {
     const filterer = new Filterer(
       new TestQuerier({ filter: { test: 123 } }, knex('test'))
-    )
+    );
 
-    expect(filterer.validate()).toBe(true)
-  })
+    expect(filterer.validate()).to.equal(true);
+  });
 
-  test('returns the cached `true` on subsequent calls', () => {
+  it('returns the cached `true` on subsequent calls', () => {
     const filterer = new Filterer(
       new TestQuerier({ filter: { test: 123 } }, knex('test'))
-    )
+    );
 
-    expect(filterer.validate()).toBe(true)
-    expect(filterer._validate).toBe(true)
-    expect(filterer.validate()).toBe(true)
-  })
+    expect(filterer.validate()).to.equal(true);
+    expect(filterer._validate).to.equal(true);
+    expect(filterer.validate()).to.equal(true);
+  });
 
-  test('returns `true` if disabled', () => {
-    const filterer = new Filterer(new TestQuerier({}, knex('test')))
+  it('returns `true` if disabled', () => {
+    const filterer = new Filterer(new TestQuerier({}, knex('test')));
 
-    jest.spyOn(filterer, 'isEnabled', 'get').mockReturnValue(false)
+    jest.spyOn(filterer, 'isEnabled', 'get').mockReturnValue(false);
 
-    expect(filterer.validate()).toBe(true)
-  })
+    expect(filterer.validate()).to.equal(true);
+  });
 
-  test('throws `ValidationError` if invalid', () => {
+  it('throws `ValidationError` if invalid', () => {
     const filterer = new Filterer(
       new TestQuerier({ filter: { invalid: 123 } }, knex('test'))
-    )
+    );
 
     expect(() => filterer.validate()).toThrow(
       new ValidationError('filter:invalid is not allowed')
-    )
-  })
-})
+    );
+  });
+});
 
 describe('run', () => {
-  test('applies each filter in order of schema', () => {
+  it('applies each filter in order of schema', () => {
     const filterer = new Filterer(
       new TestQuerier(
         {
@@ -117,11 +122,11 @@ describe('run', () => {
         },
         knex('test')
       )
-    )
+    );
 
-    filterer.apply = jest.fn()
+    filterer.apply = jest.fn();
 
-    filterer.run()
+    filterer.run();
 
     expect(filterer.apply).toHaveBeenNthCalledWith(
       1,
@@ -131,7 +136,7 @@ describe('run', () => {
         value: 123,
       },
       'filter:test[=]'
-    )
+    );
 
     expect(filterer.apply).toHaveBeenNthCalledWith(
       2,
@@ -141,34 +146,34 @@ describe('run', () => {
         value: 456,
       },
       'filter:testing[!=]'
-    )
-  })
+    );
+  });
 
-  test('does not apply filtering if disabled', () => {
-    const filterer = new Filterer(new TestQuerier({}, knex('test')))
+  it('does not apply filtering if disabled', () => {
+    const filterer = new Filterer(new TestQuerier({}, knex('test')));
 
-    jest.spyOn(filterer, 'isEnabled', 'get').mockReturnValue(false)
-    filterer.apply = jest.fn()
+    jest.spyOn(filterer, 'isEnabled', 'get').mockReturnValue(false);
+    filterer.apply = jest.fn();
 
-    filterer.run()
+    filterer.run();
 
-    expect(filterer.apply).not.toHaveBeenCalled()
-  })
+    expect(filterer.apply).not.toHaveBeenCalled();
+  });
 
-  test('returns the querier', () => {
-    const querier = new TestQuerier({}, knex('test'))
-    const filterer = new Filterer(querier)
+  it('returns the querier', () => {
+    const querier = new TestQuerier({}, knex('test'));
+    const filterer = new Filterer(querier);
 
-    expect(filterer.run()).toBe(querier)
-  })
+    expect(filterer.run()).to.equal(querier);
+  });
 
-  test('throws `ValidationError` if invalid', () => {
+  it('throws `ValidationError` if invalid', () => {
     const filterer = new Filterer(
       new TestQuerier({ filter: { invalid: 123 } }, knex('test'))
-    )
+    );
 
     expect(() => filterer.run()).toThrow(
       new ValidationError('filter:invalid is not allowed')
-    )
-  })
-})
+    );
+  });
+});

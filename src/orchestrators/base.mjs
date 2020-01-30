@@ -85,14 +85,27 @@ export class BaseOrchestrator {
    */
   apply(values, querierMethod = null) {
     let args= [];
-    let is_function =  is.fn(this.querier[querierMethod.name]);
+    let is_function = false;
+    if (querierMethod !=null){
+      let is_function =  is.fn(this.querier[querierMethod.name]);
+    }
+
     if (is_function){
       args = [this.querier.builder, values, querierMethod];
     }else{
       args = [this.querier.builder, values];
     }
+    if (is_function) {
     this.querier.builder = this.querier.adapter[this.queryKey](...args);
+    } else{
+     
+      this.querier.builder =
+        querierMethod && is.fn(this.querier[querierMethod])
+          ? this.querier[querierMethod](...args)
+          : this.querier.adapter[this.queryKey](...args);
+   
 
+    }
     return this.querier.builder;
   }
 }

@@ -1,98 +1,100 @@
-const Config = require('../../src/config')
+import { Config }  from '../../src/config.mjs';
+import chai from 'chai';
+var expect = chai.expect;
 
 describe('constructor', () => {
-  test('accepts an object of values to set', () => {
-    const values = { test: 123 }
+  it('accepts an object of values to set', () => {
+    const values = { test: 123 };
 
-    expect(new Config(values).get()).toMatchObject(values)
-  })
-})
+    expect(new Config(values).get()).to.have.any.keys(values);
+  });
+});
 
 describe('DEFAULTS', () => {
-  test('returns `KnexAdapter` as the default adapter', () => {
-    expect(Config.DEFAULTS.adapter.name).toBe('KnexAdapter')
-  })
+  it('returns `KnexAdapter` as the default adapter', () => {
+    expect(Config.DEFAULTS.adapter.name).to.equal('KnexAdapter')
+  });
 
-  test('returns `JoiValidator` as the default validator', () => {
-    expect(Config.DEFAULTS.validator.name).toBe('JoiValidator')
-  })
-})
+  it('returns `JoiValidator` as the default validator', () => {
+    expect(Config.DEFAULTS.validator.name).to.equal('JoiValidator')
+  });
+});
 
 describe('defaults', () => {
   afterEach(() => {
-    Config._defaults = Config.DEFAULTS
-  })
+    Config._defaults = Config.DEFAULTS;
+  });
 
   describe('set', () => {
-    test('accepts an object with new values', () => {
-      const defaults = { test: 456 }
+    it('accepts an object with new values', () => {
+      const defaults = { test: 456 };
 
-      Config.defaults = defaults
+      Config.defaults = defaults;
 
-      expect(Config.defaults).toMatchObject(defaults)
-    })
+      expect(Config.defaults).to.have.any.keys(defaults)
+    });
 
-    test('merges the new values with existing values', () => {
-      const existingValues = Config.defaults
-      const newValues = { test: 789 }
+    it('merges the new values with existing values', () => {
+      const existingValues = Config.defaults;
+      const newValues = { test: 789 };
 
-      Config.defaults = newValues
+      Config.defaults = newValues;
 
-      expect(Config.defaults).toEqual({
+      expect(Config.defaults).to.deep.equal({
         ...existingValues,
-        ...newValues,
-      })
-    })
-  })
+        ...newValues
+      });
+    });
+  });
 
   describe('get', () => {
-    test('returns an object of all values', () => {
-      expect(Config.defaults).toEqual(Config.DEFAULTS)
-    })
-  })
-})
+    it('returns an object of all values', () => {
+      expect(Config.defaults).to.deep.equal(Config.DEFAULTS);
+    });
+  });
+});
 
 describe('set', () => {
-  test('accepts an object with new values', () => {
-    const config = new Config({})
-    const values = { test: 'testing' }
+  it('accepts an object with new values', () => {
+    const config = new Config({});
+    const values = { test: 'testing' };
 
-    config.set(values)
+    config.set(values);
 
-    expect(config.get()).toMatchObject(values)
-  })
+    expect(config.get()).to.have.any.keys(values);
+  });
 
-  test('merges the new values with default values', () => {
-    const config = new Config({})
+  it('merges the new values with default values', () => {
+    const config = new Config({});
 
-    config.set({ test: 'testing' })
+    config.set({ test: 'testing' });
 
-    expect(config.get()).toMatchObject(Config.defaults)
-  })
+    expect(config.get()).to.have.any.keys(Config.defaults);
+  });
 
-  test('merges the new values with existing values', () => {
-    const config = new Config({})
+  it('merges the new values with existing values', () => {
+    const config = new Config({});
 
-    config.set({ before: 123 })
+    config.set({ before: 123 });
 
-    const existingValues = config.get()
-    const newValues = { after: 456 }
+    const existingValues = config.get();
+    const newValues = { after: 456 };
 
-    config.set(newValues)
+    config.set(newValues);
 
-    expect(config.get()).toEqual({
+    expect(config.get()).to.deep.equal({
       ...existingValues,
-      ...newValues,
-    })
-  })
-})
+      ...newValues
+    });
+  });
+});
 
 describe('get', () => {
-  test('returns an object of all values when no key argument is passed', () => {
-    expect(new Config({}).get()).toEqual(Config.DEFAULTS)
-  })
+  it('returns an object of all values when no key argument is passed', () => {
+    expect(new Config({}).get()).to.deep.equal(Config.DEFAULTS);
+  });
 
-  test('returns a specific value when a key argument is passed', () => {
-    expect(new Config({}).get('adapter')).toBe(Config.DEFAULTS.adapter)
-  })
-})
+  it('returns a specific value when a key argument is passed', () => {
+    expect(new Config({}).get('adapter')).to.equal(Config.DEFAULTS.adapter);
+  });
+});

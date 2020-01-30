@@ -1,37 +1,41 @@
-const BaseValidator = require('../../../../src/validators/querier/base')
-const NotImplementedError = require('../../../../src/errors/not_implemented')
-const ValidationError = require('../../../../src/errors/validation')
+import { BaseValidator } from '../../../../src/validators/querier/base.mjs';
+import { NotImplementedError } from '../../../../src/errors/not_implemented.mjs';
+import { ValidationError } from '../../../../src/errors/validation.mjs';
+
+
+import chai from 'chai';
+var expect = chai.expect;
 
 describe('constructor', () => {
-  test('accepts/calls `defineSchema` and sets the returned value', () => {
-    const defineSchema = jest.fn(() => 'test')
-    const validator = new BaseValidator(defineSchema)
+  it('accepts/calls `defineSchema` and sets the returned value', () => {
+    const defineSchema = jest.fn(() => 'test');
+    const validator = new BaseValidator(defineSchema);
 
-    expect(defineSchema).toHaveBeenCalled()
-    expect(validator.schema).toBe('test')
-  })
-})
+    expect(defineSchema).toHaveBeenCalled();
+    expect(validator.schema).to.equal('test');
+  });
+});
 
 describe('validate', () => {
-  test('throws `NotImplementedError` when not extended', () => {
-    const validator = new BaseValidator(() => {})
+  it('throws `NotImplementedError` when not extended', () => {
+    const validator = new BaseValidator(() => {});
 
-    expect(() => validator.validate()).toThrow(NotImplementedError)
-  })
-})
+    expect(() => validator.validate()).throws(NotImplementedError);
+  });
+});
 
 describe('defineSchemaArgs', () => {
-  test('returns no arguments to call `defineSchema` with', () => {
-    const validator = new BaseValidator(() => {})
+  it('returns no arguments to call `defineSchema` with', () => {
+    const validator = new BaseValidator(() => {});
 
-    expect(validator.defineSchemaArgs).toEqual([])
-  })
-})
+    expect(validator.defineSchemaArgs).to.deep.equal([]);
+  });
+});
 
 describe('buildError', () => {
-  test('returns a `ValidationError` with the specified message', () => {
-    const validator = new BaseValidator(() => {})
+  it('returns a `ValidationError` with the specified message', () => {
+    const validator = new BaseValidator(() => {});
 
-    expect(validator.buildError('test')).toEqual(new ValidationError('test'))
-  })
-})
+    expect(validator.buildError('test')).to.deep.equal(new ValidationError('test'));
+  });
+});

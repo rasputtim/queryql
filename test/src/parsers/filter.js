@@ -1,137 +1,140 @@
-const FilterParser = require('../../../src/parsers/filter')
-const Schema = require('../../../src/schema')
-const ValidationError = require('../../../src/errors/validation')
+import { FilterParser  } from '../../../src/parsers/filter.mjs';
+import  { Schema }  from '../../../src/schema.mjs';
+import { ValidationError } from '../../../src/errors/validation.mjs';
+
+import chai from 'chai';
+var expect = chai.expect;
 
 describe('DEFAULTS', () => {
-  test('returns `null` as the default field', () => {
-    expect(FilterParser.DEFAULTS.field).toBeNull()
-  })
+  it('returns `null` as the default field', () => {
+    expect(FilterParser.DEFAULTS.field).to.be.null;
+  });
 
-  test('returns `null` as the default operator', () => {
-    expect(FilterParser.DEFAULTS.operator).toBeNull()
-  })
+  it('returns `null` as the default operator', () => {
+    expect(FilterParser.DEFAULTS.operator).to.be.null;
+  });
 
-  test('returns `null` as the default value', () => {
-    expect(FilterParser.DEFAULTS.value).toBeNull()
-  })
+  it('returns `null` as the default value', () => {
+    expect(FilterParser.DEFAULTS.value).to.be.null;
+  });
 })
 
 describe('buildKey', () => {
-  test('builds/returns a string to use as a key', () => {
-    const parser = new FilterParser('filter', {}, new Schema())
+  it('builds/returns a string to use as a key', () => {
+    const parser = new FilterParser('filter', {}, new Schema());
     const key = parser.buildKey({
       field: 'test',
       operator: '=',
-    })
+    });
 
-    expect(key).toBe('filter:test[=]')
-  })
-})
+    expect(key).to.equal('filter:test[=]')
+  });
+});
 
 describe('validation', () => {
-  test('throws if the field is not whitelisted in the schema', () => {
-    const parser = new FilterParser('filter', { invalid: 123 }, new Schema())
+  it('throws if the field is not whitelisted in the schema', () => {
+    const parser = new FilterParser('filter', { invalid: 123 }, new Schema());
 
     expect(() => parser.validate()).toThrow(
       new ValidationError('filter:invalid is not allowed')
-    )
-  })
+    );
+  });
 
-  test('throws if the operator is not whitelisted in the schema', () => {
+  it('throws if the operator is not whitelisted in the schema', () => {
     const parser = new FilterParser(
       'filter',
       { invalid: { '!=': 123 } },
       new Schema().filter('invalid', '=')
-    )
+    );
 
     expect(() => parser.validate()).toThrow(
       new ValidationError('filter:invalid[!=] is not allowed')
-    )
-  })
+    );
+  });
 
-  test('throws if no operator or default operator is specified', () => {
+  it('throws if no operator or default operator is specified', () => {
     const parser = new FilterParser(
       'filter',
       { invalid: 123 },
       new Schema().filter('invalid', '=')
-    )
+    );
 
     expect(() => parser.validate()).toThrow(
       new ValidationError('filter:invalid must be of type object')
-    )
-  })
+    );
+  });
 
-  test('permits an array value', () => {
+  it('permits an array value', () => {
     const parser = new FilterParser(
       'filter',
       { valid: { in: [1, 2, 3] } },
       new Schema().filter('valid', 'in')
-    )
+    );
 
     expect(() => parser.validate()).not.toThrow()
-  })
+  });
 
-  test('permits a boolean value', () => {
+  it('permits a boolean value', () => {
     const parser = new FilterParser(
       'filter',
       { valid: { '=': true } },
       new Schema().filter('valid', '=')
-    )
+    );
 
     expect(() => parser.validate()).not.toThrow()
-  })
+  });
 
-  test('permits a number value', () => {
+  it('permits a number value', () => {
     const parser = new FilterParser(
       'filter',
       { valid: { '=': 123 } },
       new Schema().filter('valid', '=')
-    )
+    );
 
     expect(() => parser.validate()).not.toThrow()
-  })
+  });
 
-  test('permits a string value', () => {
+  it('permits a string value', () => {
     const parser = new FilterParser(
       'filter',
       { valid: { '=': 'string' } },
       new Schema().filter('valid', '=')
-    )
+    );
 
     expect(() => parser.validate()).not.toThrow()
-  })
+  });
 
-  test('throws for a non-permitted value', () => {
+  it('throws for a non-permitted value', () => {
     const parser = new FilterParser(
       'filter',
       { invalid: { '=': null } },
       new Schema().filter('invalid', '=')
-    )
+    );
 
     expect(() => parser.validate()).toThrow(
       new ValidationError(
         'filter:invalid[=] must be one of [array, boolean, number, string]'
       )
-    )
-  })
-})
+    );
+  });
+});
 
 describe('flatten', () => {
-  test('flattens/returns parsed map into object with keys => values', () => {
+  it('flattens/returns parsed map into object with keys => values', () => {
     const parser = new FilterParser(
       'filter',
       { test: { '=': 123 } },
       new Schema().filter('test', '=')
-    )
+    );
 
-    expect(parser.flatten(parser.parse())).toEqual({
+    expect(parser.flatten(parser.parse())).to.deep.equal({
       'filter:test[=]': 123,
-    })
-  })
-})
+    });
+  });
+});
 
 describe('parse', () => {
-  test('`filter[field]=value` with a default operator', () => {
+  it('`filter[field]=value` with a default operator', () => {
     const parser = new FilterParser(
       'filter',
       { test: 123 },
@@ -139,28 +142,28 @@ describe('parse', () => {
       { operator: '=' }
     )
 
-    expect(parser.parse().get('filter:test[=]')).toEqual({
+    expect(parser.parse().get('filter:test[=]')).to.deep.equal({
       field: 'test',
       operator: '=',
       value: 123,
-    })
-  })
+    });
+  });
 
-  test('`filter[field][operator]=value` with one operator', () => {
+  it('`filter[field][operator]=value` with one operator', () => {
     const parser = new FilterParser(
       'filter',
       { test: { '!=': 456 } },
       new Schema().filter('test', '!=')
-    )
+    );
 
-    expect(parser.parse().get('filter:test[!=]')).toEqual({
+    expect(parser.parse().get('filter:test[!=]')).to.deep.equal({
       field: 'test',
       operator: '!=',
       value: 456,
-    })
-  })
+    });
+  });
 
-  test('`filter[field][operator]=value` with multiple operators', () => {
+  it('`filter[field][operator]=value` with multiple operators', () => {
     const parser = new FilterParser(
       'filter',
       {
@@ -170,22 +173,22 @@ describe('parse', () => {
         },
       },
       new Schema().filter('test', '=').filter('test', '!=')
-    )
+    );
 
-    expect(parser.parse().get('filter:test[=]')).toEqual({
+    expect(parser.parse().get('filter:test[=]')).to.deep.equal({
       field: 'test',
       operator: '=',
       value: 123,
-    })
+    });
 
-    expect(parser.parse().get('filter:test[!=]')).toEqual({
+    expect(parser.parse().get('filter:test[!=]')).to.deep.equal({
       field: 'test',
       operator: '!=',
       value: 456,
-    })
-  })
+    });
+  });
 
-  test('`filter[field][operator]=value` with multiple fields', () => {
+  it('`filter[field][operator]=value` with multiple fields', () => {
     const parser = new FilterParser(
       'filter',
       {
@@ -193,32 +196,32 @@ describe('parse', () => {
         test2: { '!=': 456 },
       },
       new Schema().filter('test1', '=').filter('test2', '!=')
-    )
+    );
 
-    expect(parser.parse().get('filter:test1[=]')).toEqual({
+    expect(parser.parse().get('filter:test1[=]')).to.deep.equal({
       field: 'test1',
       operator: '=',
       value: 123,
-    })
+    });
 
-    expect(parser.parse().get('filter:test2[!=]')).toEqual({
+    expect(parser.parse().get('filter:test2[!=]')).to.deep.equal({
       field: 'test2',
       operator: '!=',
       value: 456,
-    })
-  })
+    });
+  });
 
-  test('returns an empty `Map` if no query', () => {
+  it('returns an empty `Map` if no query', () => {
     const parser = new FilterParser('filter', undefined, new Schema())
 
-    expect(parser.parse().size).toBe(0)
-  })
+    expect(parser.parse().size).to.equal(0)
+  });
 
-  test('throws `ValidationError` if invalid', () => {
+  it('throws `ValidationError` if invalid', () => {
     const parser = new FilterParser('filter', { invalid: 123 }, new Schema())
 
     expect(() => parser.parse()).toThrow(
       new ValidationError('filter:invalid is not allowed')
-    )
-  })
-})
+    );
+  });
+});

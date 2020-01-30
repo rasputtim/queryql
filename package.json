@@ -27,11 +27,18 @@
     "lint:quality": "eslint .",
     "lint:quality:fix": "eslint --fix .",
     "release": "release-it",
-    "test": "jest"
+    "test_old": "jest ",
+    "test": "mocha --require esm --recursive --exit",
+    "test-ci": "npm run jshint && istanbul cover mocha -- --require esm --exit"
   },
   "dependencies": {
     "@hapi/joi": "^17.1.0",
+    "chai": "^4.2.0",
     "is": "^3.3.0",
+    "knex": "^0.20.2",
+    "mocha": "^7.0.1",
+    "reify": "^0.20.12",
+    "sinon": "^8.1.1",
     "typescript": "^3.7.5"
   },
   "devDependencies": {
@@ -40,7 +47,6 @@
     "eslint-plugin-jest": "^23.0.4",
     "jest": "^25.1.0",
     "jest-junit": "^9.0.0",
-    "knex": "^0.20.8",
     "npm-run-all": "^4.1.5",
     "prettier": "1.19.1",
     "release-it": "^12.4.3"

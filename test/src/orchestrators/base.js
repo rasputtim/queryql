@@ -1,30 +1,35 @@
-const knex = require('knex')({ client: 'pg' })
+import Knex from 'knex'; const knex = new Knex({ client: 'pg' });
 
-const BaseOrchestrator = require('../../../src/orchestrators/base')
-const NotImplementedError = require('../../../src/errors/not_implemented')
-const TestQuerier = require('../../queriers/test')
-const ValidationError = require('../../../src/errors/validation')
-let buildParser
+import  { BaseOrchestrator } from '../../../src/orchestrators/base.mjs';
+import { NotImplementedError }from '../../../src/errors/not_implemented.mjs';
+import {  TestQuerier } from '../../queriers/test.mjs';
+import { ValidationError } from '../../../src/errors/validation.mjs';
+
+
+import chai from 'chai';
+var expect = chai.expect;
+
+let buildParser;
 
 beforeEach(() => {
   buildParser = jest
     .spyOn(BaseOrchestrator.prototype, 'buildParser')
-    .mockReturnValue({ parse: () => {} })
-})
+    .mockReturnValue({ parse: () => {} });
+});
 
 afterEach(() => {
   buildParser.mockRestore()
 })
 
 describe('constructor', () => {
-  test('accepts a querier to set', () => {
+  it('accepts a querier to set', () => {
     const querier = new TestQuerier({}, knex('test'))
     const filterer = new BaseOrchestrator(querier)
 
-    expect(filterer.querier).toBe(querier)
+    expect(filterer.querier).to.equal(querier)
   })
 
-  test('calls `buildParser` and sets the returned value', () => {
+  it('calls `buildParser` and sets the returned value', () => {
     const orchestrator = new BaseOrchestrator(new TestQuerier({}, knex('test')))
 
     expect(buildParser).toHaveBeenCalled()
@@ -33,79 +38,79 @@ describe('constructor', () => {
 })
 
 describe('queryKey', () => {
-  test('throws `NotImplementedError` when not extended', () => {
+  it('throws `NotImplementedError` when not extended', () => {
     const orchestrator = new BaseOrchestrator(new TestQuerier({}, knex('test')))
 
-    expect(() => orchestrator.queryKey).toThrow(NotImplementedError)
+    expect(() => orchestrator.queryKey).throws(NotImplementedError);
   })
 })
 
 describe('schema', () => {
-  test('throws `NotImplementedError` when not extended', () => {
+  it('throws `NotImplementedError` when not extended', () => {
     const orchestrator = new BaseOrchestrator(new TestQuerier({}, knex('test')))
 
-    expect(() => orchestrator.schema).toThrow(NotImplementedError)
+    expect(() => orchestrator.schema).throws(NotImplementedError);
   })
 })
 
 describe('isEnabled', () => {
-  test('throws `NotImplementedError` when not extended', () => {
+  it('throws `NotImplementedError` when not extended', () => {
     const orchestrator = new BaseOrchestrator(new TestQuerier({}, knex('test')))
 
-    expect(() => orchestrator.isEnabled).toThrow(NotImplementedError)
+    expect(() => orchestrator.isEnabled).throws(NotImplementedError);
   })
 })
 
 describe('buildParser', () => {
-  test('throws `NotImplementedError` when not extended', () => {
+  it('throws `NotImplementedError` when not extended', () => {
     const orchestrator = new BaseOrchestrator(new TestQuerier({}, knex('test')))
 
     buildParser.mockRestore()
 
-    expect(() => orchestrator.buildParser()).toThrow(NotImplementedError)
+    expect(() => orchestrator.buildParser()).throws(NotImplementedError);
   })
 })
 
 describe('validate', () => {
-  test('throws `NotImplementedError` when not extended', () => {
+  it('throws `NotImplementedError` when not extended', () => {
     const orchestrator = new BaseOrchestrator(new TestQuerier({}, knex('test')))
 
-    expect(() => orchestrator.validate()).toThrow(NotImplementedError)
+    expect(() => orchestrator.validate()).throws(NotImplementedError);
   })
 })
 
 describe('run', () => {
-  test('throws `NotImplementedError` when not extended', () => {
+  it('throws `NotImplementedError` when not extended', () => {
     const orchestrator = new BaseOrchestrator(new TestQuerier({}, knex('test')))
 
-    expect(() => orchestrator.run()).toThrow(NotImplementedError)
+    expect(() => orchestrator.run()).throws(NotImplementedError);
   })
 })
 
 describe('query', () => {
-  test('returns the query value specified by the query key', () => {
+  it('returns the query value specified by the query key', () => {
     const orchestrator = new BaseOrchestrator(
       new TestQuerier({ test: 123 }, knex('test'))
     )
 
     jest.spyOn(orchestrator, 'queryKey', 'get').mockReturnValue('test')
 
-    expect(orchestrator.query).toBe(123)
+    expect(orchestrator.query).to.equal(123)
   })
 })
 
 describe('parse', () => {
-  test('parses/returns the query', () => {
+  it('parses/returns the query', () => {
     const orchestrator = new BaseOrchestrator(new TestQuerier({}, knex('test')))
 
     jest.spyOn(orchestrator, 'isEnabled', 'get').mockReturnValue(true)
 
     orchestrator.parser = { parse: () => 123 }
 
-    expect(orchestrator.parse()).toBe(123)
+    expect(orchestrator.parse()).to.equal(123)
   })
 
-  test('returns the cached parsed query on subsequent calls', () => {
+  it('returns the cached parsed query on subsequent calls', () => {
     const orchestrator = new BaseOrchestrator(new TestQuerier({}, knex('test')))
 
     jest.spyOn(orchestrator, 'isEnabled', 'get').mockReturnValue(true)
@@ -114,21 +119,21 @@ describe('parse', () => {
 
     orchestrator.parser = { parse }
 
-    expect(orchestrator.parse()).toBe(123)
-    expect(orchestrator.parse()).toBe(123)
+    expect(orchestrator.parse()).to.equal(123)
+    expect(orchestrator.parse()).to.equal(123)
     expect(parse).toHaveBeenCalledTimes(1)
   })
 
-  test('returns `null` if disabled, no query', () => {
+  it('returns `null` if disabled, no query', () => {
     const orchestrator = new BaseOrchestrator(new TestQuerier({}, knex('test')))
 
     jest.spyOn(orchestrator, 'queryKey', 'get').mockReturnValue('test')
     jest.spyOn(orchestrator, 'isEnabled', 'get').mockReturnValue(false)
 
-    expect(orchestrator.parse()).toBeNull()
+    expect(orchestrator.parse()).to.be.null;
   })
 
-  test('throws `ValidationError` if disabled, with query', () => {
+  it('throws `ValidationError` if disabled, with query', () => {
     const orchestrator = new BaseOrchestrator(
       new TestQuerier({ test: 123 }, knex('test'))
     )
@@ -143,7 +148,7 @@ describe('parse', () => {
 })
 
 describe('apply', () => {
-  test('calls/returns method on querier if method defined', () => {
+  it('calls/returns method on querier if method defined', () => {
     const querier = new TestQuerier({}, knex('test'))
     const orchestrator = new BaseOrchestrator(querier)
     const data = {
@@ -154,11 +159,11 @@ describe('apply', () => {
     jest.spyOn(orchestrator, 'queryKey', 'get').mockReturnValue('sort')
     querier['sort:test'] = jest.fn(builder => builder)
 
-    expect(orchestrator.apply(data, 'sort:test')).toBe(querier.builder)
+    expect(orchestrator.apply(data, 'sort:test')).to.equal(querier.builder)
     expect(querier['sort:test']).toHaveBeenCalledWith(querier.builder, data)
   })
 
-  test('calls/returns method on adapter if querier method not defined', () => {
+  it('calls/returns method on adapter if querier method not defined', () => {
     const querier = new TestQuerier({}, knex('test'))
     const orchestrator = new BaseOrchestrator(querier)
     const data = {
@@ -169,11 +174,11 @@ describe('apply', () => {
     jest.spyOn(orchestrator, 'queryKey', 'get').mockReturnValue('sort')
     jest.spyOn(querier.adapter, 'sort')
 
-    expect(orchestrator.apply(data, 'test')).toBe(querier.builder)
+    expect(orchestrator.apply(data, 'test')).to.equal(querier.builder)
     expect(querier.adapter.sort).toHaveBeenCalledWith(querier.builder, data)
   })
 
-  test('calls/returns method on adapter if no querier method specified', () => {
+  it('calls/returns method on adapter if no querier method specified', () => {
     const querier = new TestQuerier({}, knex('test'))
     const orchestrator = new BaseOrchestrator(querier)
     const data = {
@@ -185,7 +190,7 @@ describe('apply', () => {
     jest.spyOn(orchestrator, 'queryKey', 'get').mockReturnValue('page')
     jest.spyOn(querier.adapter, 'page')
 
-    expect(orchestrator.apply(data)).toBe(querier.builder)
+    expect(orchestrator.apply(data)).to.equal(querier.builder)
     expect(querier.adapter.page).toHaveBeenCalledWith(querier.builder, data)
   })
 })

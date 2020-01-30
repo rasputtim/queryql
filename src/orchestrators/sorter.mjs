@@ -28,7 +28,9 @@ export class Sorter extends BaseOrchestrator {
     if (!this.isEnabled) {
       return true;
     }
-
+/**
+ * validate the parser, the validator and the adapter
+ */
     if (!this._validate) {
       this._validate =
         this.parser.validate() &&

@@ -1,19 +1,23 @@
-const BaseError = require('../../../src/errors/base')
+import { BaseError } from '../../../src/errors/base.mjs';
 
-test('extends Error', () => {
-  expect(new BaseError('test')).toBeInstanceOf(Error)
-})
+import chai from 'chai';
+var expect = chai.expect;
+
+
+it('extends Error', () => {
+  expect(new BaseError('test')).toBeInstanceOf(Error);
+});
 
 describe('constructor', () => {
-  test('accepts a message to set', () => {
-    expect(new BaseError('test').message).toBe('test')
-  })
+  it('accepts a message to set', () => {
+    expect(new BaseError('test').message).to.equal('test');
+  });
 
-  test('captures the stack trace', () => {
-    expect(new BaseError('test').stack).toMatch('BaseError')
-  })
+  it('captures the stack trace', () => {
+    expect(new BaseError('test').stack).toMatch('BaseError');
+  });
 
-  test('sets the `name` property to the class name', () => {
-    expect(new BaseError('test').name).toBe('BaseError')
-  })
-})
+  it('sets the `name` property to the class name', () => {
+    expect(new BaseError('test').name).to.equal('BaseError');
+  });
+});

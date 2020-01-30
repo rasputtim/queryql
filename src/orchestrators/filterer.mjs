@@ -51,14 +51,20 @@ export class Filterer extends BaseOrchestrator {
     );
   }
 
-  /**
-   * if it is not enabled, return true without validating the filters
-   */
+  
   validate() {
     if (!this.isEnabled) {
       return true;
     }
-
+/**
+ * validate the parser, the validator and the adapter
+ */
+    if (!this._validate) {
+      this._validate =
+        this.parser.validate() &&
+        this.querier.adapter.validator.validatePage(this.parse()) &&
+        this.querier.validator.validate(this.parser.flatten(this.parse()));
+    }
     
 
     return this._validate;

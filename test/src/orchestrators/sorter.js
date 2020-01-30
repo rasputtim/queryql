@@ -1,42 +1,49 @@
-const knex = require('knex')({ client: 'pg' })
+import Knex from 'knex'; const knex = new Knex({ client: 'pg' });
 
-const EmptyQuerier = require('../../queriers/empty')
+import { EmptyQuerier } from  '../../queriers/empty.mjs';
 const Sorter = require('../../../src/orchestrators/sorter')
-const TestQuerier = require('../../queriers/test')
-const ValidationError = require('../../../src/errors/validation')
+import {  TestQuerier } from '../../queriers/test.mjs';
+import { ValidationError } from '../../../src/errors/validation.mjs';
+
+
+
+import chai from 'chai';
+var expect = chai.expect;
+ 
+
 
 describe('queryKey', () => {
-  test('returns the key for filters in the query', () => {
-    const sorter = new Sorter(new TestQuerier({}, knex('test')))
+  it('returns the key for filters in the query', () => {
+    const sorter = new Sorter(new TestQuerier({}, knex('test')));
 
-    expect(sorter.queryKey).toBe('sort')
-  })
-})
+    expect(sorter.queryKey).to.equal('sort');
+  });
+});
 
 describe('schema', () => {
-  test('returns the schema for sorts', () => {
-    const sorter = new Sorter(new TestQuerier({}, knex('test')))
+  it('returns the schema for sorts', () => {
+    const sorter = new Sorter(new TestQuerier({}, knex('test')));
 
-    expect(sorter.schema.has('test')).toBe(true)
-  })
-})
+    expect(sorter.schema.has('test')).to.equal(true);
+  });
+});
 
 describe('isEnabled', () => {
-  test('returns `true` if >= 1 sort is whitelisted in the schema', () => {
-    const sorter = new Sorter(new TestQuerier({}, knex('test')))
+  it('returns `true` if >= 1 sort is whitelisted in the schema', () => {
+    const sorter = new Sorter(new TestQuerier({}, knex('test')));
 
-    expect(sorter.isEnabled).toBe(true)
-  })
+    expect(sorter.isEnabled).to.equal(true);
+  });
 
-  test('returns `false` if no sort is whitelisted in the schema', () => {
-    const sorter = new Sorter(new EmptyQuerier({}, knex('test')))
+  it('returns `false` if no sort is whitelisted in the schema', () => {
+    const sorter = new Sorter(new EmptyQuerier({}, knex('test')));
 
-    expect(sorter.isEnabled).toBe(false)
-  })
-})
+    expect(sorter.isEnabled).to.equal(false);
+  });
+});
 
 describe('parse', () => {
-  test('parses/returns the sorts from the query', () => {
+  it('parses/returns the sorts from the query', () => {
     const sorter = new Sorter(
       new TestQuerier(
         {
@@ -44,65 +51,65 @@ describe('parse', () => {
         },
         knex('test')
       )
-    )
+    );
 
-    expect(sorter.parse().has('sort:test')).toBe(true)
-  })
+    expect(sorter.parse().has('sort:test')).to.equal(true)
+  });
 
-  test('calls/uses `querier.defaultSort` if no query', () => {
-    const querier = new TestQuerier({}, knex('test'))
+  it('calls/uses `querier.defaultSort` if no query', () => {
+    const querier = new TestQuerier({}, knex('test'));
 
     const defaultSort = jest
       .spyOn(querier, 'defaultSort', 'get')
-      .mockReturnValue('test')
+      .mockReturnValue('test');
 
-    const sorter = new Sorter(querier)
-    const parsed = sorter.parse()
+    const sorter = new Sorter(querier);
+    const parsed = sorter.parse();
 
-    expect(sorter.query).toBeFalsy()
-    expect(defaultSort).toHaveBeenCalled()
-    expect(parsed.has('sort:test')).toBe(true)
+    expect(sorter.query).toBeFalsy();
+    expect(defaultSort).toHaveBeenCalled();
+    expect(parsed.has('sort:test')).to.equal(true);
 
-    defaultSort.mockRestore()
-  })
-})
+    defaultSort.mockRestore();
+  });
+});
 
 describe('validate', () => {
-  test('returns `true` if valid', () => {
-    const sorter = new Sorter(new TestQuerier({ sort: 'test' }, knex('test')))
+  it('returns `true` if valid', () => {
+    const sorter = new Sorter(new TestQuerier({ sort: 'test' }, knex('test')));
 
-    expect(sorter.validate()).toBe(true)
-  })
+    expect(sorter.validate()).to.equal(true);
+  });
 
-  test('returns the cached `true` on subsequent calls', () => {
-    const sorter = new Sorter(new TestQuerier({ sort: 'test' }, knex('test')))
+  it('returns the cached `true` on subsequent calls', () => {
+    const sorter = new Sorter(new TestQuerier({ sort: 'test' }, knex('test')));
 
-    expect(sorter.validate()).toBe(true)
-    expect(sorter._validate).toBe(true)
-    expect(sorter.validate()).toBe(true)
-  })
+    expect(sorter.validate()).to.equal(true);
+    expect(sorter._validate).to.equal(true);
+    expect(sorter.validate()).to.equal(true);
+  });
 
-  test('returns `true` if disabled', () => {
-    const sorter = new Sorter(new TestQuerier({}, knex('test')))
+  it('returns `true` if disabled', () => {
+    const sorter = new Sorter(new TestQuerier({}, knex('test')));
 
-    jest.spyOn(sorter, 'isEnabled', 'get').mockReturnValue(false)
+    jest.spyOn(sorter, 'isEnabled', 'get').mockReturnValue(false);
 
-    expect(sorter.validate()).toBe(true)
-  })
+    expect(sorter.validate()).to.equal(true);
+  });
 
-  test('throws `ValidationError` if invalid', () => {
+  it('throws `ValidationError` if invalid', () => {
     const sorter = new Sorter(
       new TestQuerier({ sort: { test: 'invalid' } }, knex('test'))
-    )
+    );
 
     expect(() => sorter.validate()).toThrow(
       new ValidationError('sort:test must be one of [asc, desc]')
-    )
-  })
-})
+    );
+  });
+});
 
 describe('run', () => {
-  test('applies each sort in order of query', () => {
+  it('applies each sort in order of query', () => {
     const sorter = new Sorter(
       new TestQuerier(
         {
@@ -110,11 +117,11 @@ describe('run', () => {
         },
         knex('test')
       )
-    )
+    );
 
-    sorter.apply = jest.fn()
+    sorter.apply = jest.fn();
 
-    sorter.run()
+    sorter.run();
 
     expect(sorter.apply).toHaveBeenNthCalledWith(
       1,
@@ -123,7 +130,7 @@ describe('run', () => {
         order: 'asc',
       },
       'sort:testing'
-    )
+    );
 
     expect(sorter.apply).toHaveBeenNthCalledWith(
       2,
@@ -132,34 +139,34 @@ describe('run', () => {
         order: 'asc',
       },
       'sort:test'
-    )
-  })
+    );
+  });
 
-  test('does not apply sorting if disabled', () => {
-    const sorter = new Sorter(new TestQuerier({}, knex('test')))
+  it('does not apply sorting if disabled', () => {
+    const sorter = new Sorter(new TestQuerier({}, knex('test')));
 
-    jest.spyOn(sorter, 'isEnabled', 'get').mockReturnValue(false)
-    sorter.apply = jest.fn()
+    jest.spyOn(sorter, 'isEnabled', 'get').mockReturnValue(false);
+    sorter.apply = jest.fn();
 
-    sorter.run()
+    sorter.run();
 
     expect(sorter.apply).not.toHaveBeenCalled()
-  })
+  });
 
-  test('returns the querier', () => {
-    const querier = new TestQuerier({}, knex('test'))
-    const sorter = new Sorter(querier)
+  it('returns the querier', () => {
+    const querier = new TestQuerier({}, knex('test'));
+    const sorter = new Sorter(querier);
 
-    expect(sorter.run()).toBe(querier)
-  })
+    expect(sorter.run()).to.equal(querier);
+  });
 
-  test('throws `ValidationError` if invalid', () => {
+  it('throws `ValidationError` if invalid', () => {
     const sorter = new Sorter(
       new TestQuerier({ sort: { test: 'invalid' } }, knex('test'))
-    )
+    );
 
     expect(() => sorter.run()).toThrow(
       new ValidationError('sort:test must be one of [asc, desc]')
-    )
-  })
-})
+    );
+  });
+});

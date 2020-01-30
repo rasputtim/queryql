@@ -45,7 +45,7 @@ export class QueryQL {
      * * the configuratios are <key,value> pairs in the format <'field[operator]', {field,operator,options}} >
      */
     this.schema = new Schema();
-    this.defineSchema(this.schema); //cria os mapascom as configurações dos esquemas
+    this.defineSchema(this.schema); //cria os mapas com as configurações dos esquemas
 
     this.filterer = new Filterer(this);
     this.sorter = new Sorter(this);

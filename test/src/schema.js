@@ -1,137 +1,139 @@
-const Schema = require('../../src/schema')
+import { Schema } from '../../src/schema.mjs';
+import chai from 'chai';
+var expect = chai.expect;
 
 describe('constructor', () => {
-  test('defaults to no whitelisted filters', () => {
-    expect(new Schema().filters.size).toBe(0)
-  })
+  it('defaults to no whitelisted filters', () => {
+    expect(new Schema().filters.size).to.equal(0);
+  });
 
-  test('defaults to no whitelisted sorts', () => {
-    expect(new Schema().sorts.size).toBe(0)
-  })
+  it('defaults to no whitelisted sorts', () => {
+    expect(new Schema().sorts.size).to.equal(0);
+  });
 
-  test('defaults to pagination disabled', () => {
-    expect(new Schema().pageOptions.isEnabled).toBe(false)
-  })
-})
+  it('defaults to pagination disabled', () => {
+    expect(new Schema().pageOptions.isEnabled).to.equal(false);
+  });
+});
 
 describe('filter', () => {
-  test('whitelists a filter', () => {
-    const schema = new Schema()
+  it('whitelists a filter', () => {
+    const schema = new Schema();
 
-    schema.filter('test', '=')
+    schema.filter('test', '=');
 
-    expect(schema.filters.get('test[=]')).toEqual({
+    expect(schema.filters.get('test[=]')).to.deep.equal({
       field: 'test',
       operator: '=',
       options: {},
-    })
-  })
+    });
+  });
 
-  test('accepts an optional options object', () => {
-    const schema = new Schema()
-    const options = { test: 123 }
+  it('accepts an optional options object', () => {
+    const schema = new Schema();
+    const options = { test: 123 };
 
-    schema.filter('test', '=', options)
+    schema.filter('test', '=', options);
 
-    expect(schema.filters.get('test[=]').options).toEqual(options)
-  })
+    expect(schema.filters.get('test[=]').options).to.deep.equal(options);
+  });
 
-  test('returns itself for chaining', () => {
-    const schema = new Schema()
+  it('returns itself for chaining', () => {
+    const schema = new Schema();
 
-    expect(schema.filter('test', '=')).toBe(schema)
-  })
-})
+    expect(schema.filter('test', '=')).to.equal(schema);
+  });
+});
 
 describe('sort', () => {
-  test('whitelists a sort', () => {
-    const schema = new Schema()
+  it('whitelists a sort', () => {
+    const schema = new Schema();
 
-    schema.sort('test')
+    schema.sort('test');
 
-    expect(schema.sorts.get('test')).toEqual({
+    expect(schema.sorts.get('test')).to.deep.equal({
       field: 'test',
       options: {},
-    })
+    });
+  });
+
+  it('accepts an optional options object', () => {
+    const schema = new Schema();
+    const options = { test: 123 };
+
+    schema.sort('test', options);
+
+    expect(schema.sorts.get('test').options).to.deep.equal(options)
   })
 
-  test('accepts an optional options object', () => {
-    const schema = new Schema()
-    const options = { test: 123 }
+  it('returns itself for chaining', () => {
+    const schema = new Schema();
 
-    schema.sort('test', options)
-
-    expect(schema.sorts.get('test').options).toEqual(options)
-  })
-
-  test('returns itself for chaining', () => {
-    const schema = new Schema()
-
-    expect(schema.sort('test')).toBe(schema)
-  })
-})
+    expect(schema.sort('test')).to.equal(schema);
+  });
+});
 
 describe('page', () => {
-  test('accepts boolean `true` to enable', () => {
-    const schema = new Schema()
+  it('accepts boolean `true` to enable', () => {
+    const schema = new Schema();
 
-    schema.page(true)
+    schema.page(true);
 
-    expect(schema.pageOptions).toEqual({ isEnabled: true })
-  })
+    expect(schema.pageOptions).to.deep.equal({ isEnabled: true });
+  });
 
-  test('accepts boolean `false` to disable', () => {
-    const schema = new Schema()
+  it('accepts boolean `false` to disable', () => {
+    const schema = new Schema();
 
-    schema.page(false)
+    schema.page(false);
 
-    expect(schema.pageOptions).toEqual({ isEnabled: false })
-  })
+    expect(schema.pageOptions).to.deep.equal({ isEnabled: false });
+  });
 
-  test('defaults to enable when called without arguments', () => {
-    const schema = new Schema()
+  it('defaults to enable when called without arguments', () => {
+    const schema = new Schema();
 
-    schema.page()
+    schema.page();
 
-    expect(schema.pageOptions).toEqual({ isEnabled: true })
-  })
+    expect(schema.pageOptions).to.deep.equal({ isEnabled: true });
+  });
 
-  test('accepts object of options', () => {
-    const schema = new Schema()
+  it('accepts object of options', () => {
+    const schema = new Schema();
     const options = {
       isEnabled: false,
       test: 123,
-    }
+    };
 
-    schema.page(options)
+    schema.page(options);
 
-    expect(schema.pageOptions).toEqual(options)
-  })
+    expect(schema.pageOptions).to.deep.equal(options);
+  });
 
-  test('defaults to enable when `isEnabled` not specified in options', () => {
-    const schema = new Schema()
-    const options = { test: 123 }
+  it('defaults to enable when `isEnabled` not specified in options', () => {
+    const schema = new Schema();
+    const options = { test: 123 };
 
-    schema.page(options)
+    schema.page(options);
 
-    expect(schema.pageOptions).toEqual({
+    expect(schema.pageOptions).to.deep.equal({
       ...options,
       isEnabled: true,
-    })
-  })
-})
+    });
+  });
+});
 
 describe('mapFilterFieldsToOperators', () => {
-  test('returns object with filter fields (keys) => operators (values)', () => {
-    const schema = new Schema()
+  it('returns object with filter fields (keys) => operators (values)', () => {
+    const schema = new Schema();
 
-    schema.filter('test1', '=')
-    schema.filter('test1', '!=')
-    schema.filter('test2', 'in')
+    schema.filter('test1', '=');
+    schema.filter('test1', '!=');
+    schema.filter('test2', 'in');
 
-    expect(schema.mapFilterFieldsToOperators()).toEqual({
+    expect(schema.mapFilterFieldsToOperators()).to.deep.equal({
       test1: ['=', '!='],
       test2: ['in'],
-    })
-  })
-})
+    });
+  });
+});
